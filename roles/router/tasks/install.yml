@@ -8,28 +8,28 @@
 
 - name: copy 10-aether-access.netdev to {{ systemd_network_dir }}/10-aether-access.netdev
   template:
-    src: roles/router/templates/10-aether-access.netdev
+    src: roles/router/templates/systemd/10-aether-access.netdev
     dest: "{{ systemd_network_dir }}/10-aether-access.netdev"
   when: inventory_hostname in groups['master_nodes']
   become: true
 
 - name: copy 20-aether-access.network to {{ systemd_network_dir }}/20-aether-access.network
   template:
-    src: roles/router/templates/20-aether-access.network
+    src: roles/router/templates/systemd/20-aether-access.network
     dest: "{{ systemd_network_dir }}/20-aether-access.network"
   when: inventory_hostname in groups['master_nodes']
   become: true
 
 - name: copy 10-aether-core.netdev to {{ systemd_network_dir }}/10-aether-core.netdev
   template:
-    src: roles/router/templates/10-aether-core.netdev
+    src: roles/router/templates/systemd/10-aether-core.netdev
     dest: "{{ systemd_network_dir }}/10-aether-core.netdev"
   when: inventory_hostname in groups['master_nodes']
   become: true
 
 - name: copy 20-aether-core.network to {{ systemd_network_dir }}/20-aether-core.network
   template:
-    src: roles/router/templates/20-aether-core.network
+    src: roles/router/templates/systemd/20-aether-core.network
     dest: "{{ systemd_network_dir }}/20-aether-core.network"
   when: inventory_hostname in groups['master_nodes']
   become: true
@@ -49,14 +49,14 @@
 
 - name: copy macvlan.conf to {{ systemd_network_dir }}/{{ result.stdout }}.d/macvlan.conf
   template:
-    src: roles/router/templates/macvlan.conf
+    src: roles/router/templates/systemd/macvlan.conf
     dest: "{{ systemd_network_dir }}/{{ result.stdout }}.d/macvlan.conf"
   when: inventory_hostname in groups['master_nodes']
   become: true
 
 - name: copy aether-ue-nat.service to {{ systemd_system_dir }}/aether-ue-nat.service
   template:
-    src: roles/router/templates/aether-ue-nat.service
+    src: roles/router/templates/systemd/aether-ue-nat.service
     dest: "{{ systemd_system_dir }}/aether-ue-nat.service"
   when: inventory_hostname in groups['master_nodes']
   become: true

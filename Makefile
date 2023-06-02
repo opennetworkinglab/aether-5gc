@@ -21,9 +21,9 @@ include $(K8S_ROOT_DIR)/Makefile
 		--extra-vars "ROOT_DIR=$(ROOT_DIR)" --extra-vars $(EXTRA_VARS)
 
 #### b. Provision router ####
-router-install: 
+5gc-router-install: 
 	ansible-playbook -i $(HOSTS_INI_FILE) $(5GC_ROOT_DIR)/router.yml --tags install \
 		--extra-vars "ROOT_DIR=$(ROOT_DIR)" --extra-vars $(EXTRA_VARS)
-router-uninstall:
+5gc-router-uninstall:
 	ansible-playbook -i $(HOSTS_INI_FILE) $(5GC_ROOT_DIR)/router.yml --tags uninstall \
 		--extra-vars "ROOT_DIR=$(ROOT_DIR)" --extra-vars $(EXTRA_VARS)

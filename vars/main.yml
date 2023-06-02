@@ -4,3 +4,5 @@ rke2:
     params_file: 
       path: "templates/rke2-params.yaml"
 
+router:
+  data_iface: ens18
