@@ -1,0 +1,3 @@
+[submodule "deps/k8s"]
+	path = deps/k8s
+	url = https://gitlab.com/serverless-5g/onf/aether-latest/ansible/k8s.git
