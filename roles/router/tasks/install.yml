@@ -1,0 +1,99 @@
+---
+
+# TODO: running on master node for now (fix to run on multiple nodes)
+
+- set_fact:
+    systemd_network_dir: /etc/systemd/network
+    systemd_system_dir: /etc/systemd/system
+
+- name: copy 10-aether-access.netdev to {{ systemd_network_dir }}/10-aether-access.netdev
+  template:
+    src: roles/router/templates/10-aether-access.netdev
+    dest: "{{ systemd_network_dir }}/10-aether-access.netdev"
+  when: inventory_hostname in groups['master_nodes']
+  become: true
+
+- name: copy 20-aether-access.network to {{ systemd_network_dir }}/20-aether-access.network
+  template:
+    src: roles/router/templates/20-aether-access.network
+    dest: "{{ systemd_network_dir }}/20-aether-access.network"
+  when: inventory_hostname in groups['master_nodes']
+  become: true
+
+- name: copy 10-aether-core.netdev to {{ systemd_network_dir }}/10-aether-core.netdev
+  template:
+    src: roles/router/templates/10-aether-core.netdev
+    dest: "{{ systemd_network_dir }}/10-aether-core.netdev"
+  when: inventory_hostname in groups['master_nodes']
+  become: true
+
+- name: copy 20-aether-core.network to {{ systemd_network_dir }}/20-aether-core.network
+  template:
+    src: roles/router/templates/20-aether-core.network
+    dest: "{{ systemd_network_dir }}/20-aether-core.network"
+  when: inventory_hostname in groups['master_nodes']
+  become: true
+
+
+
+
+
+
+
+
+- name: copy 20-aether-core.network to {{ systemd_network_dir }}/20-aether-core.network
+  template:
+    src: roles/router/templates/20-aether-core.network
+    dest: "{{ systemd_network_dir }}/20-aether-core.network"
+  when: inventory_hostname in groups['master_nodes']
+  become: true
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+- set_fact:
+    script_dir: /tmp/helm
+
+- name: remove {{ script_dir }}
+  file:
+    path: "{{ script_dir }}"
+    state: absent
+  when: inventory_hostname in groups['master_nodes']
+
+- name: create {{ script_dir }}
+  file:
+    path: "{{ script_dir }}"
+    state: directory
+  when: inventory_hostname in groups['master_nodes']
+
+- name: download get-helm.sh
+  get_url:
+    url: https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
+    validate_certs: false
+    dest: "{{ script_dir }}/get-helm.sh"
+    mode: "a+x"
+  when: inventory_hostname in groups['master_nodes']
+
+- name: install helm on masters
+  shell: "{{ script_dir }}/get-helm.sh"
+  environment:
+    DESIRED_VERSION: "{{ helm.version }}"
+  when: inventory_hostname in groups['master_nodes']
+  become: true
+
+- name: add incubator chart repo
+  kubernetes.core.helm_repository:
+    name: incubator
+    repo_url: "https://charts.helm.sh/incubator"
+  when: inventory_hostname in groups['master_nodes']
