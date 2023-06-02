@@ -5,14 +5,20 @@
   gather_facts: true
 
   tasks:
+  # - name: find files matching pattern
+  #   find:
+  #     paths: "*/systemd/network"
+  #     patterns: "*ens18.network"
+  #     file_type: file
+  #     depth: 1
+  #   register: found_files
+  #   become: true
+
   - name: find files matching pattern
-    find:
-      paths: "/"
-      patterns: "*ens18.network"
-      file_type: file
-      depth: 1
-    register: found_files
+    shell: basename $(find /*/systemd/network -maxdepth 1 -not -type d -name '*ens18.network' -print)
+    register: find_output
+    become: true
 
   - name: print matching file paths
     debug:
-      var: found_files.files
+      var: find_output.stdout

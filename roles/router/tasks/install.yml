@@ -34,66 +34,29 @@
   when: inventory_hostname in groups['master_nodes']
   become: true
 
-
-
-
-
-
-
-
-- name: copy 20-aether-core.network to {{ systemd_network_dir }}/20-aether-core.network
-  template:
-    src: roles/router/templates/20-aether-core.network
-    dest: "{{ systemd_network_dir }}/20-aether-core.network"
+- name: find {{ router.data_iface }}'s netplan network directory
+  shell: basename $(find /*/systemd/network -maxdepth 1 -not -type d -name '*{{ router.data_iface }}.network' -print)
+  register: result
   when: inventory_hostname in groups['master_nodes']
   become: true
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-- set_fact:
-    script_dir: /tmp/helm
-
-- name: remove {{ script_dir }}
+- name: create {{ systemd_network_dir }}/{{ result.stdout }}.d
   file:
-    path: "{{ script_dir }}"
-    state: absent
-  when: inventory_hostname in groups['master_nodes']
-
-- name: create {{ script_dir }}
-  file:
-    path: "{{ script_dir }}"
+    path: "{{ systemd_network_dir }}/{{ result.stdout }}.d"
     state: directory
   when: inventory_hostname in groups['master_nodes']
+  become: true
 
-- name: download get-helm.sh
-  get_url:
-    url: https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-3
-    validate_certs: false
-    dest: "{{ script_dir }}/get-helm.sh"
-    mode: "a+x"
-  when: inventory_hostname in groups['master_nodes']
-
-- name: install helm on masters
-  shell: "{{ script_dir }}/get-helm.sh"
-  environment:
-    DESIRED_VERSION: "{{ helm.version }}"
+- name: copy macvlan.conf to {{ systemd_network_dir }}/{{ result.stdout }}.d/macvlan.conf
+  template:
+    src: roles/router/templates/macvlan.conf
+    dest: "{{ systemd_network_dir }}/{{ result.stdout }}.d/macvlan.conf"
   when: inventory_hostname in groups['master_nodes']
   become: true
 
-- name: add incubator chart repo
-  kubernetes.core.helm_repository:
-    name: incubator
-    repo_url: "https://charts.helm.sh/incubator"
+- name: copy aether-ue-nat.service to {{ systemd_system_dir }}/aether-ue-nat.service
+  template:
+    src: roles/router/templates/aether-ue-nat.service
+    dest: "{{ systemd_system_dir }}/aether-ue-nat.service"
   when: inventory_hostname in groups['master_nodes']
+  become: true
