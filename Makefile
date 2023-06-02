@@ -1,34 +1,12 @@
-#### Start Ansible docker ####
+#### Variables ####
 
-ansible:
-	export ANSIBLE_NAME=ansible-k8s; \
-	sh ./scripts/ansible ssh-agent bash
+export 5GC_ROOT_DIR ?= ./
+export K8S_ROOT_DIR ?= $(5GC_ROOT_DIR)/deps/k8s
 
-### a. Private keys (for ssh and git)
+export ANSIBLE_NAME ?= ansible-5gc
+export ANSIBLE_CONFIG ?= $(K8S_ROOT_DIR)/ansible.cfg
+export HOSTS_INI ?= hosts.ini
 
-list-keys:
-	ssh-add -l
+#### Provisioning k8s ####
 
-# add-keys:
-# 	ssh-add <your key>
-
-### b. Deugging
-
-pingall:
-	ansible-playbook -i hosts.ini pingall.yml
-
-### c. Provision k8s
-k8s-install: rke2-install helm-install
-k8s-uninstall: helm-uninstall rke2-uninstall
-
-### d. Provision rke2
-rke2-install:
-	ansible-playbook -i hosts.ini rke2.yml --tags install 
-rke2-uninstall:
-	ansible-playbook -i hosts.ini rke2.yml --tags uninstall 
-
-### e. Provision helm
-helm-install:
-	ansible-playbook -i hosts.ini helm.yml --tags install 
-helm-uninstall:
-	ansible-playbook -i hosts.ini helm.yml --tags uninstall
+include $(K8S_ROOT_DIR)/Makefile
