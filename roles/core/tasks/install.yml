@@ -1,0 +1,31 @@
+---
+
+- name: add cord chart repo
+  kubernetes.core.helm_repository:
+    name: cord
+    repo_url: "https://charts.opencord.org"
+  when: inventory_hostname in groups['master_nodes']
+
+- name: add atomix chart repo
+  kubernetes.core.helm_repository:
+    name: atomix
+    repo_url: "https://charts.atomix.io"
+  when: inventory_hostname in groups['master_nodes']
+
+- name: add onosproject chart repo
+  kubernetes.core.helm_repository:
+    name: onosproject
+    repo_url: "https://charts.onosproject.org"
+  when: inventory_hostname in groups['master_nodes']
+
+- name: add aether chart repo
+  kubernetes.core.helm_repository:
+    name: aether
+    repo_url: "https://charts.aetherproject.org"
+  when: inventory_hostname in groups['master_nodes']
+
+- name: add rancher chart repo
+  kubernetes.core.helm_repository:
+    name: rancher
+    repo_url: "http://charts.rancher.io/"
+  when: inventory_hostname in groups['master_nodes']
