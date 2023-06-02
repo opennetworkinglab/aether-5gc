@@ -1,8 +1,10 @@
-rke2:
-  config:
-    server: node1
-    params_file: 
-      path: "templates/rke2-params.yaml"
+k8s:
+  rke2:
+    config:
+      server: node1
+      params_file: 
+        path: "templates/rke2-params.yaml"
 
-router:
-  data_iface: ens18
+5gc:
+  router:
+    data_iface: ens18

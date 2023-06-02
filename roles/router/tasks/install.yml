@@ -34,8 +34,8 @@
   when: inventory_hostname in groups['master_nodes']
   become: true
 
-- name: find {{ router.data_iface }}'s netplan network directory
-  shell: basename $(find /*/systemd/network -maxdepth 1 -not -type d -name '*{{ router.data_iface }}.network' -print)
+- name: find {{ 5gc.router.data_iface }}'s netplan network directory
+  shell: basename $(find /*/systemd/network -maxdepth 1 -not -type d -name '*{{ 5gc.router.data_iface }}.network' -print)
   register: result
   when: inventory_hostname in groups['master_nodes']
   become: true

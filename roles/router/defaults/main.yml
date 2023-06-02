@@ -1,4 +1,4 @@
-
-router:
-  data_iface: data
+5gc:
+  router:
+    data_iface: data
   
