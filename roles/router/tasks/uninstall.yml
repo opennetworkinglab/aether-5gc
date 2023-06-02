@@ -1,24 +1,55 @@
 ---
 
-- name: remove incubator chart repo
-  kubernetes.core.helm_repository:
-    name: incubator
-    state: absent
-  when: inventory_hostname in groups['master_nodes']
-  ignore_errors: yes
+# TODO: running on master node for now (fix to run on multiple nodes)
 
 - set_fact:
-    script_dir: /tmp/helm
+    systemd_network_dir: /etc/systemd/network
+    systemd_system_dir: /etc/systemd/system
 
-- name: remove /usr/local/bin/helm
+- name: delete {{ systemd_system_dir }}/aether-ue-nat.service
   file:
-    path: "/usr/local/bin/helm"
+    path: "{{ systemd_system_dir }}/aether-ue-nat.service"
     state: absent
   when: inventory_hostname in groups['master_nodes']
   become: true
 
-- name: remove {{ script_dir }}
+- name: find {{ core.router.data_iface }}'s netplan network directory
+  shell: basename $(find /*/systemd/network -maxdepth 1 -not -type d -name '*{{ core.router.data_iface }}.network' -print)
+  register: result
+  when: inventory_hostname in groups['master_nodes']
+  become: true
+
+- name: delete {{ systemd_network_dir }}/{{ result.stdout }}.d
   file:
-    path: "{{ script_dir }}"
+    path: "{{ systemd_network_dir }}/{{ result.stdout }}.d"
     state: absent
   when: inventory_hostname in groups['master_nodes']
+  become: true
+
+- name: delete {{ systemd_network_dir }}/20-aether-core.network
+  file:
+    path: "{{ systemd_network_dir }}/20-aether-core.network"
+    state: absent
+  when: inventory_hostname in groups['master_nodes']
+  become: true
+
+- name: delete {{ systemd_network_dir }}/10-aether-core.netdev
+  file:
+    path: "{{ systemd_network_dir }}/10-aether-core.netdev"
+    state: absent
+  when: inventory_hostname in groups['master_nodes']
+  become: true
+
+- name: delete {{ systemd_network_dir }}/20-aether-access.network
+  file:
+    path: "{{ systemd_network_dir }}/20-aether-access.network"
+    state: absent
+  when: inventory_hostname in groups['master_nodes']
+  become: true
+
+- name: delete  {{ systemd_network_dir }}/10-aether-access.netdev
+  file:
+    path: "{{ systemd_network_dir }}/10-aether-access.netdev"
+    state: absent
+  when: inventory_hostname in groups['master_nodes']
+  become: true

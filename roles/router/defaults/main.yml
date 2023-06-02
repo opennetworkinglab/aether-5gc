@@ -1,4 +1,4 @@
-5gc:
+core:
   router:
     data_iface: data
   
