@@ -54,29 +54,39 @@
   when: inventory_hostname in groups['master_nodes']
   become: true
 
-- name: stop aether-ue-nat.service
-  systemd:
-    name: aether-ue-nat.service
-    state: stopped
+# TODO: fix this hack (make a proper cleanup service)
+- name: post-delete steps
+  shell: |
+    ip link del access || true
+    ip link del core || true
+    iptables -t nat -D POSTROUTING -s 172.250.0.0/16 -o {{ core.router.data_iface }} -j MASQUERADE || true
+    systemctl daemon-reload
   when: inventory_hostname in groups['master_nodes']
   become: true
 
-- name: disbale aether-ue-nat.service
-  systemd:
-    name: aether-ue-nat.service
-    enabled: false
-  when: inventory_hostname in groups['master_nodes']
-  become: true
+# - name: stop aether-ue-nat.service
+#   systemd:
+#     name: aether-ue-nat.service
+#     state: stopped
+#   when: inventory_hostname in groups['master_nodes']
+#   become: true
 
-- name: force systemd to reread configs
-  systemd:
-    daemon_reload: true
-  when: inventory_hostname in groups['master_nodes']
-  become: true
+# - name: disbale aether-ue-nat.service
+#   systemd:
+#     name: aether-ue-nat.service
+#     enabled: false
+#   when: inventory_hostname in groups['master_nodes']
+#   become: true
 
-- name: restart systemd-networkd
-  systemd:
-    name: systemd-networkd
-    state: restarted
-  when: inventory_hostname in groups['master_nodes']
-  become: true
+# - name: force systemd to reread configs
+#   systemd:
+#     daemon_reload: true
+#   when: inventory_hostname in groups['master_nodes']
+#   become: true
+
+# - name: restart systemd-networkd
+#   systemd:
+#     name: systemd-networkd
+#     state: restarted
+#   when: inventory_hostname in groups['master_nodes']
+#   become: true
