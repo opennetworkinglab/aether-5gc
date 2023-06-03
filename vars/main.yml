@@ -3,8 +3,9 @@ k8s:
     config:
       server: node1
       params_file: 
-        path: "templates/rke2-params.yaml"
-
+        master: "templates/rke2-master-params.yaml"
+        worker: "templates/rke2-worker-params.yaml"
+      
 core:
   standalone: "true"
   data_iface: ens18
