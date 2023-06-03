@@ -1,5 +1,14 @@
 ---
 
+- name: deploy aether 5gc
+  kubernetes.core.helm:
+    name: sd-core
+    release_namespace: omec
+    state: absent
+    wait: true
+  when: inventory_hostname in groups['master_nodes']
+  ignore_errors: yes
+
 - name: remove rancher chart repo
   kubernetes.core.helm_repository:
     name: rancher

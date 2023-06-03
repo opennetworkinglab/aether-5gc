@@ -1,36 +1,34 @@
 ---
 
-# - name: add cord chart repo
-#   kubernetes.core.helm_repository:
-#     name: cord
-#     repo_url: "https://charts.opencord.org"
-#   when: inventory_hostname in groups['master_nodes']
+- name: add cord chart repo
+  kubernetes.core.helm_repository:
+    name: cord
+    repo_url: "https://charts.opencord.org"
+  when: inventory_hostname in groups['master_nodes']
 
-# - name: add atomix chart repo
-#   kubernetes.core.helm_repository:
-#     name: atomix
-#     repo_url: "https://charts.atomix.io"
-#   when: inventory_hostname in groups['master_nodes']
+- name: add atomix chart repo
+  kubernetes.core.helm_repository:
+    name: atomix
+    repo_url: "https://charts.atomix.io"
+  when: inventory_hostname in groups['master_nodes']
 
-# - name: add onosproject chart repo
-#   kubernetes.core.helm_repository:
-#     name: onosproject
-#     repo_url: "https://charts.onosproject.org"
-#   when: inventory_hostname in groups['master_nodes']
+- name: add onosproject chart repo
+  kubernetes.core.helm_repository:
+    name: onosproject
+    repo_url: "https://charts.onosproject.org"
+  when: inventory_hostname in groups['master_nodes']
 
-# - name: add aether chart repo
-#   kubernetes.core.helm_repository:
-#     name: aether
-#     repo_url: "https://charts.aetherproject.org"
-#   when: inventory_hostname in groups['master_nodes']
+- name: add aether chart repo
+  kubernetes.core.helm_repository:
+    name: aether
+    repo_url: "https://charts.aetherproject.org"
+  when: inventory_hostname in groups['master_nodes']
 
-# - name: add rancher chart repo
-#   kubernetes.core.helm_repository:
-#     name: rancher
-#     repo_url: "http://charts.rancher.io/"
-#   when: inventory_hostname in groups['master_nodes']
-
-#     update_repo_cache: true
+- name: add rancher chart repo
+  kubernetes.core.helm_repository:
+    name: rancher
+    repo_url: "http://charts.rancher.io/"
+  when: inventory_hostname in groups['master_nodes']
 
 - name: find {{ core.data_iface }}'s subnet for RAN
   shell: ip route | grep {{ core.data_iface }} | awk '/kernel/ {print $1}' | head -1
@@ -55,19 +53,15 @@
     dest: "/tmp/aether-5gc-values.yaml"
   when: inventory_hostname in groups['master_nodes']
 
-# - name: deploy aether 5gc
-#   kubernetes.core.helm:
-#     name: sd-core
-#     chart_ref: aether/sd-core
-#     values_files:
-#       - /tmp/aether-5gc-values.yaml
-#     release_namespace: omec
-#     create_namespace: true
-#     wait: true
-#     force: true
-
-# helm upgrade --create-namespace --install --wait \
-#     --namespace omec \
-#     --values ./5gc.yaml \
-#     sd-core \
-#     aether/sd-core
+- name: deploy aether 5gc
+  kubernetes.core.helm:
+    update_repo_cache: true
+    name: sd-core
+    release_namespace: omec
+    create_namespace: true
+    chart_ref: aether/sd-core
+    values_files:
+      - /tmp/aether-5gc-values.yaml
+    wait: true
+    force: true
+  when: inventory_hostname in groups['master_nodes']
