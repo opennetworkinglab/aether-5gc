@@ -3,7 +3,7 @@ cluster-cidr: 192.168.84.0/24
 service-cidr: 192.168.85.0/24
 kubelet-arg:
 - --allowed-unsafe-sysctls=net.*
-- --node-ip={{ ansible_default_ipv4.address }}
+# - --node-ip={{ ansible_default_ipv4.address }}
 pause-image: k8s.gcr.io/pause:3.3
 kube-proxy-arg:
 - --metrics-bind-address=0.0.0.0:10249
