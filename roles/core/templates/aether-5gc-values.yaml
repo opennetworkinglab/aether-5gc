@@ -55,9 +55,9 @@ omec-control-plane:
     amf:
       # use externalIP if you need to access your AMF from remote setup and you don't
       # want setup NodePort Service Type
-      #ngapp:
-        #externalIp: "128.110.219.37"
-        #port: 38412
+      ngapp:
+        externalIp: {{ ansible_default_ipv4.address }}
+        port: 38412
       cfgFiles:
         amfcfg.conf:
           configuration:
