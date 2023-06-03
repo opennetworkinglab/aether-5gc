@@ -251,7 +251,7 @@ omec-user-plane:
         - to: {{ ansible_default_ipv4.address }}
           via: 169.254.1.1
       enb:
-        subnet: {{ ran.subnet }} #this is your gNB network
+        subnet: {{ ran_subnet }} #this is your gNB network
       access:
         iface: {{ core.data_iface }}
       core:

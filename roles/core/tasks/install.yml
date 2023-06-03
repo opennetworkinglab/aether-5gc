@@ -31,3 +31,43 @@
 #   when: inventory_hostname in groups['master_nodes']
 
 #     update_repo_cache: true
+
+- name: find {{ core.data_iface }}'s subnet for RAN
+  shell: ip route | grep {{ core.data_iface }} | awk '/kernel/ {print $1}' | head -1
+  register: result
+  when: inventory_hostname in groups['master_nodes']
+  become: true
+
+# TODO: check if interface subnet is valid
+- set_fact:
+    ran_subnet: "{{ result.stdout }}"
+  when: inventory_hostname in groups['master_nodes']
+
+- name: remove /tmp/aether-5gc-values.yaml
+  file:
+    path: "/tmp/aether-5gc-values.yaml"
+    state: absent
+  when: inventory_hostname in groups['master_nodes']
+
+- name: copy aether-5gc-values.yaml to /tmp/aether-5gc-values.yaml
+  template:
+    src: roles/core/templates/aether-5gc-values.yaml
+    dest: "/tmp/aether-5gc-values.yaml"
+  when: inventory_hostname in groups['master_nodes']
+
+# - name: deploy aether 5gc
+#   kubernetes.core.helm:
+#     name: sd-core
+#     chart_ref: aether/sd-core
+#     values_files:
+#       - /tmp/aether-5gc-values.yaml
+#     release_namespace: omec
+#     create_namespace: true
+#     wait: true
+#     force: true
+
+# helm upgrade --create-namespace --install --wait \
+#     --namespace omec \
+#     --values ./5gc.yaml \
+#     sd-core \
+#     aether/sd-core

@@ -6,9 +6,5 @@ k8s:
         path: "templates/rke2-params.yaml"
 
 core:
-  standalone: true
+  standalone: "true"
   data_iface: ens18
-  
-ran:
-  subnet: ""
-
