@@ -1,0 +1,6 @@
+core:  
+  standalone: true
+  data_iface: data
+
+ran:
+  subnet: ""

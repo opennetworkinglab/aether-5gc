@@ -1,4 +1,3 @@
 core:
-  router:
-    data_iface: data
+  data_iface: data
   
