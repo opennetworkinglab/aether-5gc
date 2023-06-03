@@ -229,6 +229,8 @@ omec-sub-provision:
 
 omec-user-plane:
   enable: true
+  nodeSelectors:
+    enabled: true
   resources:
     enabled: false
   images:

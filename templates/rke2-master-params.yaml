@@ -12,3 +12,5 @@ kube-proxy-arg:
 - --proxy-mode=ipvs
 kube-apiserver-arg:
 - --service-node-port-range=2000-36767
+node-label:
+- "node-role.aetherproject.org=omec-upf"
