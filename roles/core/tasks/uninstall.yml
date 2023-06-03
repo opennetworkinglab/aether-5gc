@@ -6,6 +6,7 @@
     state: absent
     repo_url: "http://charts.rancher.io/"
   when: inventory_hostname in groups['master_nodes']
+  ignore_errors: yes
 
 - name: remove aether chart repo
   kubernetes.core.helm_repository:
@@ -13,6 +14,7 @@
     state: absent
     repo_url: "https://charts.aetherproject.org"
   when: inventory_hostname in groups['master_nodes']
+  ignore_errors: yes
 
 - name: remove onosproject chart repo
   kubernetes.core.helm_repository:
@@ -20,6 +22,7 @@
     state: absent
     repo_url: "https://charts.onosproject.org"
   when: inventory_hostname in groups['master_nodes']
+  ignore_errors: yes
 
 - name: remove atomix chart repo
   kubernetes.core.helm_repository:
@@ -27,6 +30,7 @@
     state: absent
     repo_url: "https://charts.atomix.io"
   when: inventory_hostname in groups['master_nodes']
+  ignore_errors: yes
 
 - name: remove cord chart repo
   kubernetes.core.helm_repository:
@@ -34,3 +38,4 @@
     state: absent
     repo_url: "https://charts.opencord.org"
   when: inventory_hostname in groups['master_nodes']
+  ignore_errors: yes
