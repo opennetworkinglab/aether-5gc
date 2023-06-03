@@ -1,5 +1,30 @@
 ---
 
+# - name: create /opt/cni/bin/ 
+#   file: 
+#     path: /opt/cni/bin/
+#     recurse: yes
+#     state: directory
+#   become: true
+
+# - name: create /tmp/cni-plugins
+#   file: 
+#     path: /tmp/cni-plugins
+#     state: directory
+
+# - name: fetch and untar cni-plugins
+#   unarchive:
+#     src: https://github.com/containernetworking/plugins/releases/download/v0.8.2/cni-plugins-linux-amd64-v0.8.2.tgz
+#     dest: /tmp/cni-plugins
+#     remote_src: yes
+
+# - name: copy /tmp/cni-plugins/static to /opt/cni/bin/
+#   copy:
+#     src: /tmp/cni-plugins/static
+#     dest: /opt/cni/bin/
+#     remote_src: yes
+#   become: true
+
 - name: add cord chart repo
   kubernetes.core.helm_repository:
     name: cord
