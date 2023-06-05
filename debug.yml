@@ -32,9 +32,9 @@
   #   debug:
   #     msg: "{{ hostvars[inventory_hostname] }}"
 
-  - name: dump facts
-    delegate_to: localhost
-    run_once: true
-    copy:
-      content: "{{ hostvars[inventory_hostname] | to_nice_json }}"
-      dest: /tmp/setup-dump.json
+  # - name: dump facts
+  #   delegate_to: localhost
+  #   run_once: true
+  #   copy:
+  #     content: "{{ hostvars[inventory_hostname] | to_nice_json }}"
+  #     dest: /tmp/setup-dump.json
