@@ -53,6 +53,8 @@
     dest: "/tmp/aether-5gc-values.yaml"
   when: inventory_hostname in groups['master_nodes']
 
+
+# TODO: add systems check to avoid issues (e.g., mongodb needing avx support)
 - name: deploy aether 5gc
   kubernetes.core.helm:
     update_repo_cache: true
