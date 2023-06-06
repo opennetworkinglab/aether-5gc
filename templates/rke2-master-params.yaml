@@ -5,7 +5,6 @@ service-cidr: 192.168.0.0/16
 kubelet-arg:
 - --allowed-unsafe-sysctls=net.*
 # - --feature-gates=CPUManager=true
-# - --topology-manager-policy=best-effort
 # - --cpu-manager-policy=static
 pause-image: k8s.gcr.io/pause:3.3
 kube-proxy-arg:
