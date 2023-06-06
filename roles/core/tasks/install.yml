@@ -53,7 +53,6 @@
     dest: "/tmp/aether-5gc-values.yaml"
   when: inventory_hostname in groups['master_nodes']
 
-
 # TODO: add systems check to avoid issues (e.g., mongodb needing avx support)
 - name: deploy aether 5gc
   kubernetes.core.helm:
@@ -61,7 +60,8 @@
     name: sd-core
     release_namespace: omec
     create_namespace: true
-    chart_ref: aether/sd-core
+    chart_ref: "{{ core.helm.chart_ref }}"
+    chart_version: "{{ core.helm.chart_version }}"
     values_files:
       - /tmp/aether-5gc-values.yaml
     wait: true

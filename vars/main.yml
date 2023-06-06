@@ -9,3 +9,6 @@ k8s:
 core:
   standalone: "true"
   data_iface: ens18
+  helm:
+    chart_ref: aether/sd-core
+    chart_version: 0.12.6 

@@ -3,19 +3,23 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
+# Disable 4G Control Plane
 omec-control-plane:
   enable4G: false
 
-# Override values for 5g-control-plane helm chart
-# 5g-control-plane Helm Charts values - https://gerrit.opencord.org/sdcore-helm-charts/5g-control-plane/values.yaml
-
+# Disable 5G RAN Simulator
+5g-ran-sim:
+  enable: false
+  
+# Override values for 5g-control-plane Helm Chart
+# https://gerrit.opencord.org/sdcore-helm-charts/5g-control-plane/values.yaml
 5g-control-plane:
   enable5G: true
   images:
     repository: "registry.opennetworking.org/docker.io/"
     #tags:
-    #  amf: # add new image name
-    # refer above helm chart to add other NF images
+    #  amf: <amf image tag>
+    # refer to above Helm Chart to add other NF images
 
   kafka:
     deploy: true
@@ -24,7 +28,7 @@ omec-control-plane:
     usePassword: false
     persistence:
       enabled: false
-    #enable following 2 lines if cluster needs to be enabled
+    # Uncomment following 2 lines to enable cluster replication
     architecture: replicaset
     replicaCount: 2
   resources:
@@ -40,12 +44,12 @@ omec-control-plane:
       syncUrl: http://sdcore-adapter-v2-1.aether-roc.svc:8080/synchronize
 
     sctplb:
-      deploy: false # if enabled then deploy sctp pod. Once backend code is stable,
-                    # this option will be enabled by default
+      deploy: false # if enabled then deploy sctp pod. 
+                    # Once backend is stable, this option will be enabled by default
 
     upfadapter:
-      deploy: false # if enabled then deploy upf adapter pod. Once backend code is stable,
-                    # this option will be enabled by default
+      deploy: false # If enabled then deploy upf adapter pod. 
+                    # Once backend is stable, this option will be enabled by default
 
     metricfunc:
       deploy: true
@@ -53,25 +57,25 @@ omec-control-plane:
     # Change AMF config here if rquired Most of the AMF config comes from Slice APIs
     # but some of the config is directly provided  thorugh helm chart
     amf:
-      # use externalIP if you need to access your AMF from remote setup and you don't
-      # want setup NodePort Service Type
+      # Use externalIP if you need to access AMF from remote setup 
+      # and you don't want setup NodePort Service Type
       ngapp:
         externalIp: {{ ansible_default_ipv4.address }}
         port: 38412
       cfgFiles:
         amfcfg.conf:
           configuration:
-            # storing AMF subscribers in the datastore is disabled by default. Once internal
-            # testing is complete we shall enable DBStore by default.
+            # storing AMF subscribers in the datastore is disabled by default. 
+            # Once internal testing is complete we will enable DBStore by default.
             enableDBStore: false
 
-    # SMF config override. Refer helm chart values for more options
+    # SMF config override. Refer helm chart values for more options.
     smf:
       cfgFiles:
         smfcfg.conf:
           configuration:
-            # storing AMF subscribers in the datastore is disabled by default. Once internal
-            # testing is complete we shall enable DBStore by default.
+            # Storing AMF subscribers in the datastore is disabled by default. 
+            # Once internal testing is complete we will enable DBStore by default.
             enableDBStore: false
 
     #pcf:
@@ -83,13 +87,14 @@ omec-control-plane:
       cfgFiles:
         nrfcfg.conf:
           configuration:
-            mongoDBStreamEnable: false # enable/disable MongoDB stream in NRF. Keep it disabled for now.
-            nfProfileExpiryEnable: false  # if enabled then remove NF profile if no keepalive received
-            nfKeepAliveTime: 60  #default timeout for NF profiles. This value will be sent to registered NF during registration/update process.
+            mongoDBStreamEnable: false    # enable/disable MongoDB stream in NRF.
+            nfProfileExpiryEnable: false  # if enabled, remove NF profile if no keepalive received
+            nfKeepAliveTime: 60           # default timeout for NF profiles
 
 
-# Override values for omec-sub-provision helm chart
-# omec-control-plane Helm Charts values - https://gerrit.opencord.org/sdcore-helm-charts/omec-sub-provision/values.yaml
+# Override values for omec-sub-provision (subscriber) Helm Chart
+# https://gerrit.opencord.org/sdcore-helm-charts/omec-sub-provision/values.yaml
+# ***Note: Most of these values can (and should) be set via ROC API***
 omec-sub-provision:
   enable: true
   images:
@@ -102,15 +107,16 @@ omec-sub-provision:
       cfgFiles:
         simapp.yaml:
           configuration:
-            provision-network-slice: {{ core.standalone }} # if enabled then Network Slices configured from simapp
+            provision-network-slice: {{ core.standalone }} # if enabled, Device Groups & Slices configure by simapp
             sub-provision-endpt:
               addr: webui.omec.svc.cluster.local  # subscriber configuation endpoint.
-            # sub-proxy-endpt:  #this is useful block if subscriber proxy is enabled in the ROC.
+            # sub-proxy-endpt: # used if subscriber proxy is enabled in the ROC.
             #   addr: subscriber-proxy.aether-roc.svc.cluster.local
             #   port: 5000
 
-            # below block configures the subscribers and their security details.
-            # you can have any number of subscriber ranges
+            # Configure Subscriber IMSIs and their security details.
+            # You can have any number of subscriber ranges
+            # This block is always necessary to establish range(s) of valid IMSIs
             subscribers:
             - ueId-start: "208930100007487"
               ueId-end: "208930100007500"
@@ -127,7 +133,7 @@ omec-sub-provision:
               key: "5122250214c33e723a5dd523fc145fc0"
               sequenceNumber: "16f3b3f70fc2"
 
-            # Configure More than one device Group as per your need
+            # Configure Device Groups (ignored if provision-network-slice is disabled)
             device-groups:
             - name:  "5g-gnbsim-user-group1"
               imsis:
@@ -148,63 +154,34 @@ omec-sub-provision:
               ip-domain-name: "pool1"
               ip-domain-expanded:
                 dnn: internet
-                dns-primary: "8.8.8.8" # Change this as per your need. This value is sent to UE
-                mtu: 1460 # This value is sent to UE/Mobile/Subscriber during Subscriber PDU Session Est
-                ue-ip-pool: "172.250.1.0/16" # IP address pool for subscribers
+                dns-primary: "8.8.8.8"        # Value is sent to UE
+                mtu: 1460                     # Value is sent to UE when PDU Session Established
+                ue-ip-pool: "172.250.1.0/16"  # IP address pool for subscribers
                 ue-dnn-qos:
-                  dnn-mbr-downlink: 200000000 #ue level downlink qos
-                  dnn-mbr-uplink:    20000000 #ue level uplink qos
-                  bitrate-unit: bps #unit for qos rates mentioned above
-                  traffic-class:  #default bearer QCI/ARP. These values are not used in 5G as such
+                  dnn-mbr-downlink: 200000000 # UE level downlink QoS
+                  dnn-mbr-uplink:    20000000 # UE level uplink QoS
+                  bitrate-unit: bps           # Unit for above QoS rates
+                  traffic-class:              # Default bearer QCI/ARP (not used in 5G)
                     name: "platinum"
                     qci: 9
                     arp: 6
                     pdb: 300
                     pelr: 6
               site-info: "aiab"
-            #configure only 1 device group if you want UPF to allocate UE address.
-            #if smf is allocating IP address then having 2 separate pools is not a problem.
-            - name:  "5g-gnbsim-user-group2" # second device Group
-              imsis:
-                - "208930100007501"
-                - "208930100007502"
-                - "208930100007503"
-                - "208930100007504"
-                - "208930100007505"
-                - "208930100007506"
-                - "208930100007507"
-                - "208930100007508"
-                - "208930100007509"
-                - "208930100007510"
-              ip-domain-name: "pool2"
-              ip-domain-expanded:
-                dnn: internet
-                dns-primary: "8.8.8.8" # Change this as per your need. This value is sent to UE
-                mtu: 1460 # This value is sent to UE/Mobile/Subscriber during Subscriber PDU Session Est
-                ue-ip-pool: "172.250.1.0/16" # IP address pool for subscribers
-                ue-dnn-qos:
-                  dnn-mbr-downlink: 400000000
-                  dnn-mbr-uplink:    10000000
-                  bitrate-unit: bps # this value can be in gbps, mbps, kbps
-                  traffic-class:  #default bearer QCI/ARP
-                    name: "platinum"
-                    qci: 8
-                    arp: 6
-                    pdb: 300
-                    pelr: 6
-              site-info: "aiab2"
+            # UPF allocates IP address if there is only 1 device-group
+            # SMF allocates IP address if there is >1 device-group
+
+            # Configure Network Slices (ignored if provision-network-slice is disabled)
             network-slices:
-            - name: "default" #provide any unique slice name
-              slice-id: #make sure this slice matches with slice configured in gNB, UE
+            - name: "default"      # can be any unique slice name
+              slice-id:            # must match with slice configured in gNB, UE
                 sd: "010203"
                 sst: 1
               site-device-group:
-              - "5g-gnbsim-user-group1"  #all UEs mentioned in this device group are assigned to this slice
-              - "5g-gnbsim-user-group2"
-              # below list of applicaiton filter controls what user can access.
-              # by default user can access all networks.
+              - "5g-gnbsim-user-group1"   # All UEs in this device-group are assigned to this slice
+              # Applicaiton filters control what each user can access.
+              # Default, allow access to all applications
               application-filtering-rules:
-              #all application information. Default, allow all applications
               - rule-name: "ALLOW-ALL"
                 priority: 250
                 action: "permit"
@@ -221,21 +198,20 @@ omec-sub-provision:
                   mnc: "93"
                 site-name: "aiab"
                 upf:
-                  upf-name: "upf"  # associated UPF for this slice. One UPF per Slice. Provide fully qualified name
+                  upf-name: "upf"  # associated UPF for this slice. One UPF per Slice.
                   upf-port: 8805
 
-# Override values for omec-user-plane helm chart
-# omec-user-plane Helm Charts values - https://gerrit.opencord.org/sdfabric-helm-charts/bess-upf/values.yaml
-
+# Override values for omec-user-plane Helm Chart
+# https://gerrit.opencord.org/sdfabric-helm-charts/bess-upf/values.yaml
 omec-user-plane:
   enable: true
-  nodeSelectors:
-    enabled: true
+  # nodeSelectors:
+  #   enabled: true
   resources:
     enabled: false
   images:
     repository: "registry.opennetworking.org/docker.io/"
-    # uncomment below section to add update bess image tag
+    # uncomment following section to add update bess image tag
     #tags:
     #  bess: <bess image tag>
     #  pfcpiface: <pfcp image tag>
@@ -243,219 +219,30 @@ omec-user-plane:
     upf:
       name: "oaisim"
       sriov:
-        enabled: false #default sriov is disabled in AIAB setup
+        enabled: false    # SRIOV is disabled by default
       hugepage:
-        enabled: false #should be enabled if dpdk is enabled
-      #can be any other plugin as well, remember this plugin dictates how IP address are assigned.
-      cniPlugin: macvlan
+        enabled: false    # Should be enabled if DPDK is enabled
+      cniPlugin: macvlan  # Can be any other plugin. Dictates how IP address are assigned
       ipam: static
       routes:
         - to: {{ ansible_default_ipv4.address }}
           via: 169.254.1.1
       enb:
-        subnet: {{ ran_subnet }} #this is your gNB network
+        subnet: {{ ran_subnet }} # Subnet for the gNB network
       access:
         iface: {{ core.data_iface }}
       core:
         iface: {{ core.data_iface }}
       cfgFiles:
         upf.json:
-          mode: af_packet  #this mode means no dpdk
+          mode: af_packet     # This mode implies no DPDK
           hwcksum: true
           log_level: "trace"
-          gtppsc: true #extension header is enabled in 5G. Sending QFI in pdu session extension header
+          gtppsc: true        # Extension header enabled in 5G.
           cpiface:
-            dnn: "internet" #keep it matching with Slice dnn
+            dnn: "internet"              # Must match Slice dnn
             hostname: "upf"
             #http_port: "8080"
-            enable_ue_ip_alloc: false # if true then it means UPF allocates address from below pool
-            ue_ip_pool: "172.250.0.0/16" # UE ip pool is used if enable_ue_ip_alloc is set to true
+            enable_ue_ip_alloc: false    # If true, UPF allocates address from following pool
+            ue_ip_pool: "172.250.0.0/16" # IP pool used UEs if enable_ue_ip_alloc=true
 
-# Override values for 5g-ran-sim helm chart
-# 5g-ran-sim Helm Charts values - https://gerrit.opencord.org/sdcore-helm-charts/5g-ran-sim/values.yaml
-
-5g-ran-sim:
-  enable: false
-  resources:
-    enabled: false
-  images:
-    repository: "registry.opennetworking.org/docker.io/"
-    #tags:
-    #  gnbsim: 5gc-gnbsim:0.0.1-dev-local5
-  config:
-    gnbsim:
-      singleInterface: false #default multiInterface. Works well for AIAB
-      execInParallel: false #run all profiles in parallel
-      goProfile:
-        enable: false #enable/disable golang profile in gnbsim
-        port: 5000
-      httpServer:
-        enable: false #enable httpServer in gnbsim
-        port: 6000
-      yamlCfgFiles:
-        gnb.conf:
-          logger:
-            logLevel: trace # trace, debug, info, warn, error, fatal, panic
-          configuration:
-             #gnbs: # pool of gNodeBs
-             #  gnb1:
-             #    n3IpAddr: "POD_IP" # set if singleInterface is true
-              gnbs: # pool of gNodeBs
-               gnb1:
-                 defaultAmf:
-                   hostName: amf # Host name of AMF
-                   port: 38412 # AMF port
-
-              # See https://github.com/omec-project/gnbsim for
-              # Documentation on supported profiles and their parameters
-              # Profile 2 (pdusessest) is typically enabled by default
-              profiles:
-              - profileType: register           # UE Registration
-                profileName: profile1
-                enable: false
-                gnbName: gnb1
-                execInParallel: false
-                startImsi: 208930100007487
-                ueCount: 5                
-                defaultAs: "192.168.250.1"
-                perUserTimeout: 100       
-                plmnId:                   
-                  mcc: 208                
-                  mnc: 93                 
-                opc: "981d464c7c52eb6e5036234984ad0bcf"
-                key: "5122250214c33e723a5dd523fc145fc0"
-                sequenceNumber: "16f3b3f70fc2"
-
-              - profileType: pdusessest         # UE Initiated Session
-                profileName: profile2
-                enable: true
-                gnbName: gnb1
-                execInParallel: false
-                startImsi: 208930100007487
-                ueCount: 5
-                defaultAs: "192.168.250.1"
-                perUserTimeout: 100
-                plmnId:
-                  mcc: 208
-                  mnc: 93
-                dataPktCount: 5
-                opc: "981d464c7c52eb6e5036234984ad0bcf"
-                key: "5122250214c33e723a5dd523fc145fc0"
-                sequenceNumber: "16f3b3f70fc2"
-
-              - profileType: anrelease          # AN Release
-                profileName: profile3
-                enable: false
-                execInParallel: false
-                gnbName: gnb1
-                startImsi: 208930100007497
-                ueCount: 5
-                defaultAs: "192.168.250.1"
-                perUserTimeout: 100 
-                plmnId:
-                  mcc: 208
-                  mnc: 93
-                opc: "981d464c7c52eb6e5036234984ad0bcf"
-                key: "5122250214c33e723a5dd523fc145fc0"
-                sequenceNumber: "16f3b3f70fc2"
-
-              - profileType: uetriggservicereq  # UE Initiated Service Request
-                profileName: profile4
-                enable: false
-                gnbName: gnb1
-                execInParallel: false
-                startImsi: 208930100007497
-                ueCount: 5
-                plmnId:
-                  mcc: 208
-                  mnc: 93
-                defaultAs: "192.168.250.1"
-                perUserTimeout: 100
-                opc: "981d464c7c52eb6e5036234984ad0bcf"
-                key: "5122250214c33e723a5dd523fc145fc0"
-                sequenceNumber: "16f3b3f70fc2"
-
-              - profileType: deregister         # UE Initiated De-registration
-                profileName: profile5
-                enable: false
-                gnbName: gnb1
-                execInParallel: false
-                startImsi: 208930100007497
-                ueCount: 5
-                defaultAs: "192.168.250.1"
-                perUserTimeout: 100
-                plmnId:
-                  mcc: 208
-                  mnc: 93
-                opc: "981d464c7c52eb6e5036234984ad0bcf"
-                key: "5122250214c33e723a5dd523fc145fc0"
-                sequenceNumber: "16f3b3f70fc2"
-
-              - profileType: nwtriggeruedereg   # N/W Initiated De-registration
-                profileName: profile6
-                enable: false
-                gnbName: gnb1
-                execInParallel: false
-                startImsi: 208930100007497
-                ueCount: 5 
-                defaultAs: "192.168.250.1"
-                perUserTimeout: 100 
-                plmnId: 
-                  mcc: 208 
-                  mnc: 93 
-                opc: "981d464c7c52eb6e5036234984ad0bcf"
-                key: "5122250214c33e723a5dd523fc145fc0"
-                sequenceNumber: "16f3b3f70fc2"
-
-              - profileType: uereqpdusessrelease  # UE Initiated Session Release
-                profileName: profile7 
-                enable: false 
-                gnbName: gnb1 
-                execInParallel: false
-                startImsi: 208930100007497
-                ueCount: 5 
-                plmnId:
-                  mcc: 208 
-                  mnc: 93
-                defaultAs: "192.168.250.1"
-                perUserTimeout: 100
-                opc: "981d464c7c52eb6e5036234984ad0bcf"
-                key: "5122250214c33e723a5dd523fc145fc0"
-                sequenceNumber: "16f3b3f70fc2"
-
-              # Custom Profiles that iterate through
-              # combinations of the supported Profiles
-              customProfiles:
-                customProfiles1:
-                  profileType: custom
-                  profileName: custom1
-                  enable: false
-                  execInParallel: false
-                  stepTrigger: false # wait for trigger to move to next step
-                  gnbName: gnb1
-                  startImsi: 208930100007487
-                  ueCount: 30
-                  defaultAs: "192.168.250.1"
-                  opc: "981d464c7c52eb6e5036234984ad0bcf"
-                  key: "5122250214c33e723a5dd523fc145fc0"
-                  sequenceNumber: "16f3b3f70fc2"
-                  plmnId:
-                    mcc: 208
-                    mnc: 93
-                  # Starting iteration; step through until quit
-                  startiteration: iteration1
-                  iterations:
-                    - "name": "iteration1"
-                      "1": "REGISTRATION-PROCEDURE 5"
-                      "2": "PDU-SESSION-ESTABLISHMENT-PROCEDURE 5"
-                      "3": "USER-DATA-PACKET-GENERATION-PROCEDURE 10"
-                      "next":  "iteration2"
-                    - "name": "iteration2"
-                      "1": "AN-RELEASE-PROCEDURE 10"
-                      "2": "UE-TRIGGERED-SERVICE-REQUEST-PROCEDURE 5"
-                      "repeat": 0   # default = 0 (execute once)
-                      "next":  "iteration3"
-                    - "name": "iteration3"
-                      "1": "UE-INITIATED-DEREGISTRATION-PROCEDURE 10"
-                      "repeat": 0     # default=0 (execute once)
-                      "next":  "quit" # default=quit (no more iterations)

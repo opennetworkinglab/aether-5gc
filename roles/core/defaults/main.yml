@@ -1,3 +1,7 @@
 core:  
   standalone: "true"
   data_iface: data
+  
+  helm:
+    chart_ref: aether/sd-core
+    chart_version: 0.12.6 
