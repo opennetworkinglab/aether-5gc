@@ -6,6 +6,24 @@
     systemd_network_dir: /etc/systemd/network
     systemd_system_dir: /etc/systemd/system
 
+- name: "delete iptable rule: forward from {{ core.data_iface }} to access"
+  iptables:
+    chain: FORWARD
+    in_interface: "{{ core.data_iface }}"
+    out_interface: access
+    jump: ACCEPT
+    state: absent
+  become: true
+
+- name: "delete iptable rule: forward from access to {{ core.data_iface }}"
+  iptables:
+    chain: FORWARD
+    in_interface: access
+    out_interface: "{{ core.data_iface }}"
+    jump: ACCEPT
+    state: absent
+  become: true
+
 - name: delete {{ systemd_system_dir }}/aether-ue-nat.service
   file:
     path: "{{ systemd_system_dir }}/aether-ue-nat.service"
