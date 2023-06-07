@@ -1,7 +1,7 @@
 # cni: multus,calico # FIXIT: use calico for single-node setup
 cni: multus,canal # FIXIT: use canal for multi-node setup
-# cluster-cidr: 192.168.0.0/16
-# service-cidr: 192.168.0.0/16
+cluster-cidr: 10.42.0.0/16
+service-cidr: 10.42.0.0/16
 kubelet-arg:
 - --allowed-unsafe-sysctls=net.*
 # - --feature-gates=CPUManager=true
