@@ -80,7 +80,12 @@
     ip link del access || true
     ip link del core || true
     iptables -t nat -D POSTROUTING -s 172.250.0.0/16 -o {{ core.data_iface }} -j MASQUERADE || true
-    systemctl daemon-reload
+  when: inventory_hostname in groups['master_nodes']
+  become: true
+
+- name: force systemd to reread configs
+  systemd:
+    daemon_reload: true
   when: inventory_hostname in groups['master_nodes']
   become: true
 
