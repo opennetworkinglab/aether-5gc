@@ -1,5 +1,4 @@
-# cni: multus,calico # FIXIT: use calico for single-node setup
-cni: multus,canal # FIXIT: use canal for multi-node setup
+cni: multus,canal
 cluster-cidr: 10.42.0.0/16
 service-cidr: 10.42.0.0/16
 kubelet-arg:
