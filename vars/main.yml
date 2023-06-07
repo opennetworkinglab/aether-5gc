@@ -1,7 +1,6 @@
 k8s:
   rke2:
     config:
-      server: node1
       params_file: 
         master: "templates/rke2-master-params.yaml"
         worker: "templates/rke2-worker-params.yaml"
