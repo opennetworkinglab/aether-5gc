@@ -13,6 +13,7 @@
     out_interface: access
     jump: ACCEPT
     state: absent
+  when: inventory_hostname in groups['master_nodes']
   become: true
 
 - name: "delete iptable rule: forward from access to {{ core.data_iface }}"
@@ -22,6 +23,7 @@
     out_interface: "{{ core.data_iface }}"
     jump: ACCEPT
     state: absent
+  when: inventory_hostname in groups['master_nodes']
   become: true
 
 - name: delete {{ systemd_system_dir }}/aether-ue-nat.service

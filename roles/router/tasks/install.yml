@@ -94,6 +94,7 @@
     in_interface: "{{ core.data_iface }}"
     out_interface: access
     jump: ACCEPT
+  when: inventory_hostname in groups['master_nodes']
   become: true
 
 - name: "add iptable rule: forward from access to {{ core.data_iface }}"
@@ -102,4 +103,5 @@
     in_interface: access
     out_interface: "{{ core.data_iface }}"
     jump: ACCEPT
+  when: inventory_hostname in groups['master_nodes']
   become: true
