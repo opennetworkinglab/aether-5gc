@@ -1,6 +1,7 @@
 core:  
   standalone: "true"
   data_iface: data
+  values_file: "roles/core/templates/sdcore-5g-values.yaml"
   
   helm:
     chart_ref: aether/sd-core

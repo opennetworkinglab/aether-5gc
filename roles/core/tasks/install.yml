@@ -41,16 +41,16 @@
     ran_subnet: "{{ result.stdout }}"
   when: inventory_hostname in groups['master_nodes']
 
-- name: remove /tmp/aether-5gc-values.yaml
+- name: remove /tmp/sdcore-5g-values.yaml
   file:
-    path: "/tmp/aether-5gc-values.yaml"
+    path: "/tmp/sdcore-5g-values.yaml"
     state: absent
   when: inventory_hostname in groups['master_nodes']
 
-- name: copy aether-5gc-values.yaml to /tmp/aether-5gc-values.yaml
+- name: copy {{ core.values_file }} to /tmp/sdcore-5g-values.yaml
   template:
-    src: roles/core/templates/aether-5gc-values.yaml
-    dest: "/tmp/aether-5gc-values.yaml"
+    src: "{{ core.values_file }}"
+    dest: "/tmp/sdcore-5g-values.yaml"
   when: inventory_hostname in groups['master_nodes']
 
 # TODO: add systems check to avoid issues (e.g., mongodb needing avx support)
@@ -63,7 +63,7 @@
     chart_ref: "{{ core.helm.chart_ref }}"
     chart_version: "{{ core.helm.chart_version }}"
     values_files:
-      - /tmp/aether-5gc-values.yaml
+      - /tmp/sdcore-5g-values.yaml
     wait: true
     force: true
   when: inventory_hostname in groups['master_nodes']

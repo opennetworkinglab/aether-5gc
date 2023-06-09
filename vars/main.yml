@@ -2,12 +2,13 @@ k8s:
   rke2:
     config:
       params_file: 
-        master: "templates/rke2-master-params.yaml"
-        worker: "templates/rke2-worker-params.yaml"
+        master: "templates/rke2/master-params.yaml"
+        worker: "templates/rke2/worker-params.yaml"
       
 core:
   standalone: "true"
   data_iface: ens18
+  values_file: "templates/core/nohpa-5g-values.yaml"
   helm:
     chart_ref: aether/sd-core
     chart_version: 0.12.6 
