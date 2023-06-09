@@ -35,6 +35,15 @@ omec-control-plane:
     enabled: false
 
   config:
+    logger:
+      # network function
+      AMF:
+        debugLevel: trace
+        ReportCaller: false
+      SMF:
+        debugLevel: trace
+        ReportCaller: false
+
     mongodb:
       name: free5gc
       url: mongodb://mongodb-arbiter-headless #enable if cluster deployment required
