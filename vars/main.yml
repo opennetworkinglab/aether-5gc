@@ -8,7 +8,7 @@ k8s:
 core:
   standalone: "true"
   data_iface: ens18
-  values_file: "templates/core/nohpa-5g-values.yaml"
+  values_file: "templates/core/hpa-5g-values.yaml"
   helm:
     chart_ref: aether/sd-core
     chart_version: 0.12.6 
