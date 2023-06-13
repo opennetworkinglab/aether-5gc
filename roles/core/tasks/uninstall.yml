@@ -49,9 +49,8 @@
   when: inventory_hostname in groups['master_nodes']
   ignore_errors: yes
 
-# - name: waiting for aether pods to terminate
-#   shell: |
-#     /var/lib/rancher/rke2/bin/kubectl --kubeconfig /etc/rancher/rke2/rke2.yaml wait -n omec --for=delete --all=true -l app!=ue pod --timeout=180s || true
-#   when: inventory_hostname in groups['master_nodes']
-#   become: true
-#   ignore_errors: yes
+- name: waiting for aether pods to terminate
+  shell: |
+    kubectl wait -n omec --for=delete --all=true -l app!=ue pod --timeout=180s
+  when: inventory_hostname in groups['master_nodes']
+  ignore_errors: yes

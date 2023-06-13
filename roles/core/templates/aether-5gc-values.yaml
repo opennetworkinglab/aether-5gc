@@ -44,11 +44,14 @@ omec-control-plane:
       syncUrl: http://sdcore-adapter-v2-1.aether-roc.svc:8080/synchronize
 
     sctplb:
-      deploy: false # if enabled then deploy sctp pod. 
+      deploy: true # if enabled then deploy sctp pod. 
                     # Once backend is stable, this option will be enabled by default
+      ngapp:
+        externalIp: {{ ansible_default_ipv4.address }}
+        port: 38412
 
     upfadapter:
-      deploy: false # If enabled then deploy upf adapter pod. 
+      deploy: true # If enabled then deploy upf adapter pod. 
                     # Once backend is stable, this option will be enabled by default
 
     metricfunc:
@@ -59,15 +62,15 @@ omec-control-plane:
     amf:
       # Use externalIP if you need to access AMF from remote setup 
       # and you don't want setup NodePort Service Type
-      ngapp:
-        externalIp: {{ ansible_default_ipv4.address }}
-        port: 38412
+      #ngapp:
+      # externalIp: {{ ansible_default_ipv4.address }}
+      #  port: 38412
       cfgFiles:
         amfcfg.conf:
           configuration:
             # storing AMF subscribers in the datastore is disabled by default. 
             # Once internal testing is complete we will enable DBStore by default.
-            enableDBStore: false
+            enableDBStore: true
 
     # SMF config override. Refer helm chart values for more options.
     smf:
@@ -76,7 +79,7 @@ omec-control-plane:
           configuration:
             # Storing AMF subscribers in the datastore is disabled by default. 
             # Once internal testing is complete we will enable DBStore by default.
-            enableDBStore: false
+            enableDBStore: true
 
     #pcf:
     #  cfgFiles:
@@ -88,7 +91,7 @@ omec-control-plane:
         nrfcfg.conf:
           configuration:
             mongoDBStreamEnable: false    # enable/disable MongoDB stream in NRF.
-            nfProfileExpiryEnable: false  # if enabled, remove NF profile if no keepalive received
+            nfProfileExpiryEnable: true  # if enabled, remove NF profile if no keepalive received
             nfKeepAliveTime: 60           # default timeout for NF profiles
 
 
