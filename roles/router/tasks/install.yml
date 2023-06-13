@@ -6,6 +6,42 @@
     systemd_network_dir: /etc/systemd/network
     systemd_system_dir: /etc/systemd/system
 
+- name: set net.ipv4.conf.all.arp_filter to 1
+  ansible.posix.sysctl:
+    name: net.ipv4.conf.all.arp_filter
+    value: '1'
+    sysctl_set: true
+    reload: true
+  when: inventory_hostname in groups['master_nodes']
+  become: true
+
+- name: set net.ipv4.conf.all.arp_ignore to 1
+  ansible.posix.sysctl:
+    name: net.ipv4.conf.all.arp_ignore
+    value: '1'
+    sysctl_set: true
+    reload: true
+  when: inventory_hostname in groups['master_nodes']
+  become: true
+
+- name: set net.ipv4.conf.all.arp_announce to 2
+  ansible.posix.sysctl:
+    name: net.ipv4.conf.all.arp_announce
+    value: '2'
+    sysctl_set: true
+    reload: true
+  when: inventory_hostname in groups['master_nodes']
+  become: true
+
+- name: set net.ipv4.conf.all.rp_filter to 2
+  ansible.posix.sysctl:
+    name: net.ipv4.conf.all.rp_filter
+    value: '2'
+    sysctl_set: true
+    reload: true
+  when: inventory_hostname in groups['master_nodes']
+  become: true
+
 - name: copy 10-aether-access.netdev to {{ systemd_network_dir }}/10-aether-access.netdev
   template:
     src: roles/router/templates/systemd/10-aether-access.netdev
@@ -105,3 +141,6 @@
 #     jump: ACCEPT
 #   when: inventory_hostname in groups['master_nodes']
 #   become: true
+
+- pause:
+    seconds: 15
