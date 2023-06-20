@@ -38,7 +38,8 @@
 
 # TODO: check if interface subnet is valid
 - set_fact:
-    ran_subnet: "172.20.0.0/16" # "{{ result.stdout }}"
+    ran_subnet: "172.20.0.0/16" #
+    # ran_subnet: "{{ result.stdout }}" #"172.20.0.0/16" #
   when: inventory_hostname in groups['master_nodes']
 
 - name: remove /tmp/sdcore-5g-values.yaml
