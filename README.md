@@ -1,6 +1,32 @@
 # 5gc
 
 
+We have 2 repos in the main Ansible folder (https://gitlab.com/serverless-5g/onf/aether-latest)
+k8s
+5gc
+
+## K8:
+k8 repo builds a multi node K8 cluster using rke2 and installs heml
+you have to provide 2 things:
+1. nodes with IP in host.ini file 
+   a. you can specify master node and worker node as well
+2. rke2 configuration param such as rke2 version in ./var/main.yaml file
+It will build a multi node cluster, you can check it by running following  command on master node
+sudo /var/lib/rancher/rke2/bin/kubectl get nodes  --kubeconfig /etc/rancher/rke2/rke2.yaml
+
+## 5GC:
+This repo build 5g stand-alone aether core with physical ran setup. It uses the same k8 repo, as submodule, to build multi-node cluster and run 5g-aether core on top
+You need to provide 2 things:
+  1. nodes with IP in host.ini file 
+     a. you can specify master node and worker node as well
+  2. aether configuration param such as RAN_Interface in ./var/main.yaml file
+We have made a role for each task(k8 setup, router setup, core setup). Each task now has a corresponding role, which can be likened to a make rule in the AIAB repository.
+To download 5gc repo use:
+git clone --recursive git@gitlab.com:serverless-5g/onf/aether-latest/ansible/5gc.git
+To install 5g-core:
+Add hosts to init file
+Run make ansible
+In running Ansible docker terminal run make 5gc-install
 
 ## Getting started
 
