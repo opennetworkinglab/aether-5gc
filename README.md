@@ -21,12 +21,14 @@ You need to provide 2 things:
      a. you can specify master node and worker node as well
   2. aether configuration param such as RAN_Interface in ./var/main.yaml file
 We have made a role for each task(k8 setup, router setup, core setup). Each task now has a corresponding role, which can be likened to a make rule in the AIAB repository.
+
 To download 5gc repo use:
-git clone --recursive git@gitlab.com:serverless-5g/onf/aether-latest/ansible/5gc.git
+`git clone --recursive git@gitlab.com:serverless-5g/onf/aether-latest/ansible/5gc.git`
+
 To install 5g-core:
-Add hosts to init file
-Run make ansible
-In running Ansible docker terminal run make 5gc-install
+1. Add hosts to init file
+2. Run make ansible
+3. In running Ansible docker terminal run make 5gc-install
 
 ## Getting started
 
