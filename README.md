@@ -13,7 +13,9 @@ you have to provide 2 things:
 2. rke2 configuration param such as rke2 version in ./var/main.yaml file
 
 It will build a multi node cluster, you can check it by running following  command on master node
-```sudo /var/lib/rancher/rke2/bin/kubectl get nodes  --kubeconfig /etc/rancher/rke2/rke2.yaml```
+```
+sudo /var/lib/rancher/rke2/bin/kubectl get nodes  --kubeconfig /etc/rancher/rke2/rke2.yaml
+```
 
 ## 5GC:
 This repo build 5g stand-alone aether core with physical ran setup. It uses the same k8 repo, as submodule, to build multi-node cluster and run 5g-aether core on top
