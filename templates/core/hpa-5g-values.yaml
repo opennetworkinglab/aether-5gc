@@ -18,7 +18,8 @@ omec-control-plane:
   images:
     repository: "registry.opennetworking.org/docker.io/"
     tags:
-      sctplb: ajaythakuronf/sctplb:0.0.1-dev-june13-1
+      sctplb: ajaythakuronf/sctplb:0.0.1-dev-june13-5
+      amf: ajaythakuronf/5gc-amf:0.0.1-dev-June23-4
     #  amf: <amf image tag>
     # refer to above Helm Chart to add other NF images
 
