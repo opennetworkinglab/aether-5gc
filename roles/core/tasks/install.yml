@@ -73,3 +73,14 @@
     wait: true
     force: true
   when: inventory_hostname in groups['master_nodes']
+
+
+#TODO: Hack restart sctplb pod, erro is causes by using this image for sctplb "sctplb: ajaythakuronf/sctplb:0.0.1-dev-june13-1"
+# - pause:
+#     seconds: 5
+
+# - name: Force stop sctplb
+#   shell:
+#     cmd: "kubectl delete po -n omec $(kubectl get po -n omec | awk '/sctplb/ {print $1}')"
+#   ignore_errors: yes
+#   when: inventory_hostname in groups['master_nodes']

@@ -5,4 +5,8 @@ core:
   
   helm:
     chart_ref: aether/sd-core
-    chart_version: 0.12.6 
+    chart_version: 0.12.6
+
+  gnbsim:
+    ueid_base: 208930100007487
+    max_ues: 1000 
