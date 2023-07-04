@@ -20,7 +20,7 @@ omec-control-plane:
     tags:
       # sctplb: ajaythakuronf/sctplb:0.0.1-dev-june13-1
       sctplb: ajaythakuronf/sctplb:0.0.1-dev-june13-5
-      amf: ajaythakuronf/5gc-amf:0.0.1-dev-June23-4
+      amf: ajaythakuronf/5gc-amf:0.0.1-dev-July2-8
     # refer to above Helm Chart to add other NF images
 
   kafka:
