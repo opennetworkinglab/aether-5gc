@@ -2,11 +2,8 @@ core:
   standalone: "true"
   data_iface: data
   values_file: "roles/core/templates/sdcore-5g-values.yaml"
+  custome_ran_subnet: ""
   
   helm:
     chart_ref: aether/sd-core
     chart_version: 0.12.6
-
-  gnbsim:
-    ueid_base: 208930100007487
-    max_ues: 1000 

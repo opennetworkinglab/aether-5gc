@@ -38,9 +38,11 @@
 
 # TODO: check if interface subnet is valid
 - set_fact:
-    ran_subnet: "172.20.0.0/16" #
-    # ran_subnet: "{{ result.stdout }}" #"172.20.0.0/16" #
+    ran_subnet: "{{ result.stdout if (core.custome_ran_subnet == '') else core.custome_ran_subnet }}"
   when: inventory_hostname in groups['master_nodes']
+
+- debug:
+    var: "ran_subnet"
 
 - name: remove /tmp/sdcore-5g-values.yaml
   file:
@@ -73,7 +75,26 @@
     wait: true
     force: true
   when: inventory_hostname in groups['master_nodes']
+  # ignore_errors: yes
+  register: aether_deployment_output
 
+- name: Get Pods Status
+  shell: kubectl get po -n omec
+  register: pod_status
+  changed_when: false
+  when: aether_deployment_output.failed and inventory_hostname in groups['master_nodes']
+
+- name: restart Pods if not running
+  shell: |
+    while IFS= read -r line; do
+      name=$(echo "$line" | awk '{print $1}')
+      status=$(echo "$line" | awk '{print $4}')
+      
+      if [[ "$status" != "Running" ]]; then
+        kubectl delete pod "$name" -n omec
+      fi
+    done <<< "{{ pod_status.stdout }}"
+  when: aether_deployment_output.failed and inventory_hostname in groups['master_nodes']
 
 - pause:
     seconds: 180 
