@@ -63,38 +63,42 @@
 
 # TODO: add systems check to avoid issues (e.g., mongodb needing avx support)
 - name: deploy aether 5gc
-  kubernetes.core.helm:
-    update_repo_cache: true
-    name: sd-core
-    release_namespace: omec
-    create_namespace: true
-    chart_ref: "{{ core.helm.chart_ref }}"
-    chart_version: "{{ core.helm.chart_version }}"
-    values_files:
-      - /tmp/sdcore-5g-values.yaml
-    wait: true
-    force: true
-  when: inventory_hostname in groups['master_nodes']
-  # ignore_errors: yes
-  register: aether_deployment_output
+  block:
+    - name: deploy aether 5gc
+      kubernetes.core.helm:
+        update_repo_cache: true
+        name: sd-core
+        release_namespace: omec
+        create_namespace: true
+        chart_ref: "{{ core.helm.chart_ref }}"
+        chart_version: "{{ core.helm.chart_version }}"
+        values_files:
+          - /tmp/sdcore-5g-values.yaml
+        wait: true
+        wait_timeout: "1m30s"
+        force: true
+      when: inventory_hostname in groups['master_nodes']
 
-- name: Get Pods Status
-  shell: kubectl get po -n omec
-  register: pod_status
-  changed_when: false
-  when: aether_deployment_output.failed and inventory_hostname in groups['master_nodes']
+  rescue:
+    - name: Get Pods Status
+      shell: kubectl get po -n omec
+      register: pod_status
+      changed_when: false
+      when: inventory_hostname in groups['master_nodes']
 
-- name: restart Pods if not running
-  shell: |
-    while IFS= read -r line; do
-      name=$(echo "$line" | awk '{print $1}')
-      status=$(echo "$line" | awk '{print $4}')
-      
-      if [[ "$status" != "Running" ]]; then
-        kubectl delete pod "$name" -n omec
-      fi
-    done <<< "{{ pod_status.stdout }}"
-  when: aether_deployment_output.failed and inventory_hostname in groups['master_nodes']
+    - name: restart Pods if not running
+      shell: |
+        while IFS= read -r line; do
+          name=$(echo "$line" | awk '{print $1}')
+          status=$(echo "$line" | awk '{print $3}')
+          
+          if [[ "$status" != "Running" ]]; then
+            kubectl delete pod "$name" -n omec
+          fi
+        done <<< "{{ pod_status.stdout }}"
+      args:
+        executable: /bin/bash
+      when: inventory_hostname in groups['master_nodes']
 
 - pause:
     seconds: 180 
