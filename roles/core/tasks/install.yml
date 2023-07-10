@@ -99,9 +99,9 @@
       args:
         executable: /bin/bash
       when: inventory_hostname in groups['master_nodes']
-
-- pause:
-    seconds: 180 
+  always:
+    - pause:
+        seconds: 180 
 
 #TODO: Hack restart sctplb pod, erro is causes by using this image for sctplb "sctplb: ajaythakuronf/sctplb:0.0.1-dev-june13-1"
 # - name: Force stop sctplb
