@@ -38,7 +38,7 @@
 
 # TODO: check if interface subnet is valid
 - set_fact:
-    ran_subnet: "{{ result.stdout if (core.custome_ran_subnet == '') else core.custome_ran_subnet }}"
+    ran_subnet: "{{ result.stdout if (core.ran_subnet == '') else core.ran_subnet }}"
   when: inventory_hostname in groups['master_nodes']
 
 - debug:
