@@ -36,5 +36,3 @@ export HOSTS_INI_FILE ?= $(5GC_ROOT_DIR)/hosts.ini
 5gc-core-uninstall:
 	ansible-playbook -i $(HOSTS_INI_FILE) $(5GC_ROOT_DIR)/core.yml --tags uninstall \
 		--extra-vars "ROOT_DIR=$(ROOT_DIR)" --extra-vars $(EXTRA_VARS)
-
-#TEST
