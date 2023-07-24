@@ -50,9 +50,9 @@
     state: absent
   when: inventory_hostname in groups['master_nodes']
 
-- name: copy {{ core.values_file }} to /tmp/sdcore-5g-values.yaml
+- name: copy {{ ROOT_DIR }}/{{ core.values_file }} to /tmp/sdcore-5g-values.yaml
   template:
-    src: "{{ core.values_file }}"
+    src: "{{ ROOT_DIR }}/{{ core.values_file }}"
     dest: "/tmp/sdcore-5g-values.yaml"
   when: inventory_hostname in groups['master_nodes']
 
