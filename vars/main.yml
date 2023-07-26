@@ -1,16 +1,8 @@
-k8s:
-  rke2:
-    config:
-      params_file: 
-        master: "templates/rke2/master-params.yaml"
-        worker: "templates/rke2/worker-params.yaml"
-      
 core:
   standalone: "true"
   data_iface: ens18
   values_file: "templates/core/hpa-5g-values.yaml"
-  # custome_ran_subnet: ""
-  custome_ran_subnet: "172.20.0.0/16"
+  ran_subnet: "172.20.0.0/16" # set it to empty to get subnet from 'data_iface'
   
   helm:
     chart_ref: aether/sd-core

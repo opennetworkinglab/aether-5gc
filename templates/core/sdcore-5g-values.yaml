@@ -17,10 +17,8 @@ omec-control-plane:
   enable5G: true
   images:
     repository: "registry.opennetworking.org/docker.io/"
-    tags:
-      # sctplb: ajaythakuronf/sctplb:0.0.1-dev-june13-1
-      sctplb: ajaythakuronf/sctplb:0.0.1-dev-june13-5
-      amf: ajaythakuronf/5gc-amf:0.0.1-dev-July2-8
+    #tags:
+    #  amf: <amf image tag>
     # refer to above Helm Chart to add other NF images
 
   kafka:
@@ -37,15 +35,6 @@ omec-control-plane:
     enabled: false
 
   config:
-    logger:
-      # network function
-      AMF:
-        debugLevel: trace
-        ReportCaller: false
-      SMF:
-        debugLevel: trace
-        ReportCaller: false
-
     mongodb:
       name: free5gc
       url: mongodb://mongodb-arbiter-headless #enable if cluster deployment required
@@ -55,14 +44,11 @@ omec-control-plane:
       syncUrl: http://sdcore-adapter-v2-1.aether-roc.svc:8080/synchronize
 
     sctplb:
-      deploy: true # if enabled then deploy sctp pod. 
+      deploy: false # if enabled then deploy sctp pod. 
                     # Once backend is stable, this option will be enabled by default
-      ngapp:
-        externalIp: {{ ansible_default_ipv4.address }}
-        port: 38412
 
     upfadapter:
-      deploy: true # If enabled then deploy upf adapter pod. 
+      deploy: false # If enabled then deploy upf adapter pod. 
                     # Once backend is stable, this option will be enabled by default
 
     metricfunc:
@@ -73,15 +59,15 @@ omec-control-plane:
     amf:
       # Use externalIP if you need to access AMF from remote setup 
       # and you don't want setup NodePort Service Type
-      # ngapp:
-      #   externalIp: {{ ansible_default_ipv4.address }}
-      #   port: 38412
+      ngapp:
+        externalIp: {{ ansible_default_ipv4.address }}
+        port: 38412
       cfgFiles:
         amfcfg.conf:
           configuration:
             # storing AMF subscribers in the datastore is disabled by default. 
             # Once internal testing is complete we will enable DBStore by default.
-            enableDBStore: true
+            enableDBStore: false
 
     # SMF config override. Refer helm chart values for more options.
     smf:
@@ -90,7 +76,7 @@ omec-control-plane:
           configuration:
             # Storing AMF subscribers in the datastore is disabled by default. 
             # Once internal testing is complete we will enable DBStore by default.
-            enableDBStore: true
+            enableDBStore: false
 
     #pcf:
     #  cfgFiles:
@@ -102,7 +88,7 @@ omec-control-plane:
         nrfcfg.conf:
           configuration:
             mongoDBStreamEnable: false    # enable/disable MongoDB stream in NRF.
-            nfProfileExpiryEnable: true  # if enabled, remove NF profile if no keepalive received
+            nfProfileExpiryEnable: false  # if enabled, remove NF profile if no keepalive received
             nfKeepAliveTime: 60           # default timeout for NF profiles
 
 
