@@ -3,6 +3,11 @@
 #
 # SPDX-License-Identifier: Apache-2.0
 
+# Depends on following environment variables (edited by Makefile)
+#   ${NODE_IP}
+#   ${RAN_SUBNET}
+#   ${DATA_IFACE}
+
 # Disable 4G Control Plane
 omec-control-plane:
   enable4G: false
@@ -54,13 +59,12 @@ omec-control-plane:
     metricfunc:
       deploy: true
 
-    # Change AMF config here if rquired Most of the AMF config comes from Slice APIs
-    # but some of the config is directly provided  thorugh helm chart
+    # AMF config override.
     amf:
       # Use externalIP if you need to access AMF from remote setup 
-      # and you don't want setup NodePort Service Type
+      #    and you don't want setup NodePort Service Type
       ngapp:
-        externalIp: {{ ansible_default_ipv4.address }}
+        externalIp: ${NODE_IP}
         port: 38412
       cfgFiles:
         amfcfg.conf:
@@ -69,7 +73,7 @@ omec-control-plane:
             # Once internal testing is complete we will enable DBStore by default.
             enableDBStore: false
 
-    # SMF config override. Refer helm chart values for more options.
+    # SMF config override.
     smf:
       cfgFiles:
         smfcfg.conf:
@@ -107,10 +111,10 @@ omec-sub-provision:
       cfgFiles:
         simapp.yaml:
           configuration:
-            provision-network-slice: {{ core.standalone }} # if enabled, Device Groups & Slices configure by simapp
+            provision-network-slice: ${SA_CORE} # if enabled, Device Groups & Slices configure by simapp
             sub-provision-endpt:
               addr: webui.omec.svc.cluster.local  # subscriber configuation endpoint.
-            # sub-proxy-endpt: # used if subscriber proxy is enabled in the ROC.
+            # sub-proxy-endpt:  # used if subscriber proxy is enabled in the ROC.
             #   addr: subscriber-proxy.aether-roc.svc.cluster.local
             #   port: 5000
 
@@ -118,125 +122,20 @@ omec-sub-provision:
             # You can have any number of subscriber ranges
             # This block is always necessary to establish range(s) of valid IMSIs
             subscribers:
-            - ueId-start: "208930100007487"
-              ueId-end: "208930100007500"
-              plmnId: "20893"
-              opc: "981d464c7c52eb6e5036234984ad0bcf"
+            - ueId-start: "001010123456864"
+              ueId-end: "001010123456868"
+              plmnId: "00101"
+              opc: "00000000000000000000000000000000"
               op: ""
-              key: "5122250214c33e723a5dd523fc145fc0"
-              sequenceNumber: "16f3b3f70fc2"
-            - ueId-start: "208930100007501"
-              ueId-end: "208930100012486"
-              plmnId: "20893"
-              opc: "981d464c7c52eb6e5036234984ad0bcf"
-              op: ""
-              key: "5122250214c33e723a5dd523fc145fc0"
+              key: "ffffffffffffffffffffffffffffffff"
               sequenceNumber: "16f3b3f70fc2"
 
             # Configure Device Groups (ignored if provision-network-slice is disabled)
             device-groups:
-            - name:  "5g-gnbsim-user-group1"
+            - name:  "5g-user-group1"
               imsis:
-                - "208930100007487"
-                - "208930100007488"
-                - "208930100007489"
-                - "208930100007490"
-                - "208930100007491"
-                - "208930100007492"
-                - "208930100007493"
-                - "208930100007494"
-                - "208930100007495"
-                - "208930100007496"
-                - "208930100007497"
-                - "208930100007498"
-                - "208930100007499"
-                - "208930100007500"
-                - "208930100007501"
-                - "208930100007502"
-                - "208930100007503"
-                - "208930100007504"
-                - "208930100007505"
-                - "208930100007506"
-                - "208930100007507"
-                - "208930100007508"
-                - "208930100007509"
-                - "208930100007510"
-                - "208930100007511"
-                - "208930100007512"
-                - "208930100007513"
-                - "208930100007514"
-                - "208930100007515"
-                - "208930100007516"
-                - "208930100007517"
-                - "208930100007518"
-                - "208930100007519"
-                - "208930100007520"
-                - "208930100007521"
-                - "208930100007522"
-                - "208930100007523"
-                - "208930100007524"
-                - "208930100007525"
-                - "208930100007526"
-                - "208930100007527"
-                - "208930100007528"
-                - "208930100007529"
-                - "208930100007530"
-                - "208930100007531"
-                - "208930100007532"
-                - "208930100007533"
-                - "208930100007534"
-                - "208930100007535"
-                - "208930100007536"
-                - "208930100007537"
-                - "208930100007538"
-                - "208930100007539"
-                - "208930100007540"
-                - "208930100007541"
-                - "208930100007542"
-                - "208930100007543"
-                - "208930100007544"
-                - "208930100007545"
-                - "208930100007546"
-                - "208930100007547"
-                - "208930100007548"
-                - "208930100007549"
-                - "208930100007550"
-                - "208930100007551"
-                - "208930100007552"
-                - "208930100007553"
-                - "208930100007554"
-                - "208930100007555"
-                - "208930100007556"
-                - "208930100007557"
-                - "208930100007558"
-                - "208930100007559"
-                - "208930100007560"
-                - "208930100007561"
-                - "208930100007562"
-                - "208930100007563"
-                - "208930100007564"
-                - "208930100007565"
-                - "208930100007566"
-                - "208930100007567"
-                - "208930100007568"
-                - "208930100007569"
-                - "208930100007570"
-                - "208930100007571"
-                - "208930100007572"
-                - "208930100007573"
-                - "208930100007574"
-                - "208930100007575"
-                - "208930100007576"
-                - "208930100007577"
-                - "208930100007578"
-                - "208930100007579"
-                - "208930100007580"
-                - "208930100007581"
-                - "208930100007582"
-                - "208930100007583"
-                - "208930100007584"
-                - "208930100007585"
-                - "208930100007586"
+                - "001010123456864"
+                - "001010123456865"
               ip-domain-name: "pool1"
               ip-domain-expanded:
                 dnn: internet
@@ -264,7 +163,7 @@ omec-sub-provision:
                 sd: "010203"
                 sst: 1
               site-device-group:
-              - "5g-gnbsim-user-group1"   # All UEs in this device-group are assigned to this slice
+              - "5g-user-group1"   # All UEs in this device-group are assigned to this slice
               # Applicaiton filters control what each user can access.
               # Default, allow access to all applications
               application-filtering-rules:
@@ -280,8 +179,8 @@ omec-sub-provision:
                 - name: "aiab-gnb2"
                   tac: 2
                 plmn:
-                  mcc: "208"
-                  mnc: "93"
+                  mcc: "001"
+                  mnc: "01"
                 site-name: "aiab"
                 upf:
                   upf-name: "upf"  # associated UPF for this slice. One UPF per Slice.
@@ -291,8 +190,6 @@ omec-sub-provision:
 # https://gerrit.opencord.org/sdfabric-helm-charts/bess-upf/values.yaml
 omec-user-plane:
   enable: true
-  nodeSelectors:
-    enabled: true
   resources:
     enabled: false
   images:
@@ -311,14 +208,14 @@ omec-user-plane:
       cniPlugin: macvlan  # Can be any other plugin. Dictates how IP address are assigned
       ipam: static
       routes:
-        - to: {{ ansible_default_ipv4.address }}
+        - to: ${NODE_IP}
           via: 169.254.1.1
       enb:
-        subnet: {{ ran_subnet }} # Subnet for the gNB network
+        subnet: ${RAN_SUBNET} # Subnet for the gNB network
       access:
-        iface: {{ core.data_iface }}
+        iface: ${DATA_IFACE}
       core:
-        iface: {{ core.data_iface }}
+        iface: ${DATA_IFACE}
       cfgFiles:
         upf.json:
           mode: af_packet     # This mode implies no DPDK
