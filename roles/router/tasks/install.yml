@@ -124,14 +124,14 @@
   when: inventory_hostname in groups['master_nodes']
   become: true
 
-# - name: "add iptable rule: forward from {{ core.data_iface }} to access"
-#   iptables:
-#     chain: FORWARD
-#     in_interface: "{{ core.data_iface }}"
-#     out_interface: access
-#     jump: ACCEPT
-#   when: inventory_hostname in groups['master_nodes']
-#   become: true
+- name: "add iptable rule: forward from {{ core.data_iface }} to access"
+  iptables:
+    chain: FORWARD
+    in_interface: "{{ core.data_iface }}"
+    out_interface: access
+    jump: ACCEPT
+  when: inventory_hostname in groups['master_nodes']
+  become: true
 
 # - name: "add iptable rule: forward from access to {{ core.data_iface }}"
 #   iptables:
