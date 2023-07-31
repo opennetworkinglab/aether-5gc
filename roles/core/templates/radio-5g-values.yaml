@@ -62,9 +62,9 @@ omec-control-plane:
     # AMF config override.
     amf:
       # Use externalIP if you need to access AMF from remote setup 
-      #    and you don't want setup NodePort Service Type
+      # and you don't want setup NodePort Service Type
       ngapp:
-        externalIp: ${NODE_IP}
+        externalIp: {{ ansible_default_ipv4.address }}
         port: 38412
       cfgFiles:
         amfcfg.conf:
@@ -111,7 +111,7 @@ omec-sub-provision:
       cfgFiles:
         simapp.yaml:
           configuration:
-            provision-network-slice: ${SA_CORE} # if enabled, Device Groups & Slices configure by simapp
+            provision-network-slice: {{ core.standalone }} # if enabled, Device Groups & Slices configure by simapp
             sub-provision-endpt:
               addr: webui.omec.svc.cluster.local  # subscriber configuation endpoint.
             # sub-proxy-endpt:  # used if subscriber proxy is enabled in the ROC.
@@ -190,6 +190,8 @@ omec-sub-provision:
 # https://gerrit.opencord.org/sdfabric-helm-charts/bess-upf/values.yaml
 omec-user-plane:
   enable: true
+  nodeSelectors:
+    enabled: true
   resources:
     enabled: false
   images:
@@ -208,14 +210,14 @@ omec-user-plane:
       cniPlugin: macvlan  # Can be any other plugin. Dictates how IP address are assigned
       ipam: static
       routes:
-        - to: ${NODE_IP}
+        - to: {{ ansible_default_ipv4.address }}
           via: 169.254.1.1
       enb:
-        subnet: ${RAN_SUBNET} # Subnet for the gNB network
+        subnet: {{ ran_subnet }} # Subnet for the gNB network
       access:
-        iface: ${DATA_IFACE}
+        iface: {{ core.data_iface }}
       core:
-        iface: ${DATA_IFACE}
+        iface: {{ core.data_iface }}
       cfgFiles:
         upf.json:
           mode: af_packet     # This mode implies no DPDK
@@ -228,4 +230,3 @@ omec-user-plane:
             #http_port: "8080"
             enable_ue_ip_alloc: false    # If true, UPF allocates address from following pool
             ue_ip_pool: "172.250.0.0/16" # IP pool used UEs if enable_ue_ip_alloc=true
-

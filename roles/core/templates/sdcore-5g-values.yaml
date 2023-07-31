@@ -44,14 +44,11 @@ omec-control-plane:
       syncUrl: http://sdcore-adapter-v2-1.aether-roc.svc:8080/synchronize
 
     sctplb:
-      deploy: true # if enabled then deploy sctp pod. 
+      deploy: false # if enabled then deploy sctp pod. 
                     # Once backend is stable, this option will be enabled by default
-      ngapp:
-        externalIp: {{ ansible_default_ipv4.address }}
-        port: 38412
 
     upfadapter:
-      deploy: true # If enabled then deploy upf adapter pod. 
+      deploy: false # If enabled then deploy upf adapter pod. 
                     # Once backend is stable, this option will be enabled by default
 
     metricfunc:
@@ -62,15 +59,15 @@ omec-control-plane:
     amf:
       # Use externalIP if you need to access AMF from remote setup 
       # and you don't want setup NodePort Service Type
-      #ngapp:
-      # externalIp: {{ ansible_default_ipv4.address }}
-      #  port: 38412
+      ngapp:
+        externalIp: {{ ansible_default_ipv4.address }}
+        port: 38412
       cfgFiles:
         amfcfg.conf:
           configuration:
             # storing AMF subscribers in the datastore is disabled by default. 
             # Once internal testing is complete we will enable DBStore by default.
-            enableDBStore: true
+            enableDBStore: false
 
     # SMF config override. Refer helm chart values for more options.
     smf:
@@ -79,7 +76,7 @@ omec-control-plane:
           configuration:
             # Storing AMF subscribers in the datastore is disabled by default. 
             # Once internal testing is complete we will enable DBStore by default.
-            enableDBStore: true
+            enableDBStore: false
 
     #pcf:
     #  cfgFiles:
@@ -91,7 +88,7 @@ omec-control-plane:
         nrfcfg.conf:
           configuration:
             mongoDBStreamEnable: false    # enable/disable MongoDB stream in NRF.
-            nfProfileExpiryEnable: true  # if enabled, remove NF profile if no keepalive received
+            nfProfileExpiryEnable: false  # if enabled, remove NF profile if no keepalive received
             nfKeepAliveTime: 60           # default timeout for NF profiles
 
 
@@ -129,7 +126,7 @@ omec-sub-provision:
               key: "5122250214c33e723a5dd523fc145fc0"
               sequenceNumber: "16f3b3f70fc2"
             - ueId-start: "208930100007501"
-              ueId-end: "208930100007599"
+              ueId-end: "208930100007586"
               plmnId: "20893"
               opc: "981d464c7c52eb6e5036234984ad0bcf"
               op: ""
@@ -154,6 +151,92 @@ omec-sub-provision:
                 - "208930100007498"
                 - "208930100007499"
                 - "208930100007500"
+                - "208930100007501"
+                - "208930100007502"
+                - "208930100007503"
+                - "208930100007504"
+                - "208930100007505"
+                - "208930100007506"
+                - "208930100007507"
+                - "208930100007508"
+                - "208930100007509"
+                - "208930100007510"
+                - "208930100007511"
+                - "208930100007512"
+                - "208930100007513"
+                - "208930100007514"
+                - "208930100007515"
+                - "208930100007516"
+                - "208930100007517"
+                - "208930100007518"
+                - "208930100007519"
+                - "208930100007520"
+                - "208930100007521"
+                - "208930100007522"
+                - "208930100007523"
+                - "208930100007524"
+                - "208930100007525"
+                - "208930100007526"
+                - "208930100007527"
+                - "208930100007528"
+                - "208930100007529"
+                - "208930100007530"
+                - "208930100007531"
+                - "208930100007532"
+                - "208930100007533"
+                - "208930100007534"
+                - "208930100007535"
+                - "208930100007536"
+                - "208930100007537"
+                - "208930100007538"
+                - "208930100007539"
+                - "208930100007540"
+                - "208930100007541"
+                - "208930100007542"
+                - "208930100007543"
+                - "208930100007544"
+                - "208930100007545"
+                - "208930100007546"
+                - "208930100007547"
+                - "208930100007548"
+                - "208930100007549"
+                - "208930100007550"
+                - "208930100007551"
+                - "208930100007552"
+                - "208930100007553"
+                - "208930100007554"
+                - "208930100007555"
+                - "208930100007556"
+                - "208930100007557"
+                - "208930100007558"
+                - "208930100007559"
+                - "208930100007560"
+                - "208930100007561"
+                - "208930100007562"
+                - "208930100007563"
+                - "208930100007564"
+                - "208930100007565"
+                - "208930100007566"
+                - "208930100007567"
+                - "208930100007568"
+                - "208930100007569"
+                - "208930100007570"
+                - "208930100007571"
+                - "208930100007572"
+                - "208930100007573"
+                - "208930100007574"
+                - "208930100007575"
+                - "208930100007576"
+                - "208930100007577"
+                - "208930100007578"
+                - "208930100007579"
+                - "208930100007580"
+                - "208930100007581"
+                - "208930100007582"
+                - "208930100007583"
+                - "208930100007584"
+                - "208930100007585"
+                - "208930100007586"
               ip-domain-name: "pool1"
               ip-domain-expanded:
                 dnn: internet
@@ -248,4 +331,3 @@ omec-user-plane:
             #http_port: "8080"
             enable_ue_ip_alloc: false    # If true, UPF allocates address from following pool
             ue_ip_pool: "172.250.0.0/16" # IP pool used UEs if enable_ue_ip_alloc=true
-
