@@ -1,0 +1,38 @@
+---
+
+- name: find {{ core.data_iface }}'s subnet for RAN
+  shell: ip route | grep {{ core.data_iface }} | awk '/kernel/ {print $1}' | head -1
+  register: result
+  when: inventory_hostname in groups['master_nodes']
+  become: true
+
+- set_fact:
+    ran_subnet: "{{ result.stdout if (core.ran_subnet == '') else core.ran_subnet }}"
+  when: inventory_hostname in groups['master_nodes']
+
+- name: copy config files to gnbsim host
+  template:
+    src: "{{ ROOT_DIR }}/{{ core.upf.values_file }}"
+    dest: /tmp/upf-{{ item.key }}.yaml
+  vars:
+    ran_subnet: "{{ran_subnet}}"
+    upf_access_ip: "{{ item.value.ip.access }}"
+    upf_core_ip:  "{{ item.value.ip.core }}"
+    upf_ue_ip_pool: "{{ item.value.ue_ip_pool }}"
+  with_dict: "{{ core.upf.additional_upfs}}"
+  when: inventory_hostname in groups['gnbsim_nodes']
+
+- name: deploy upf
+  kubernetes.core.helm:
+    update_repo_cache: true
+    name: bess-upf
+    release_namespace: omec-upf-{{ item.key }}
+    create_namespace: true
+    chart_ref: "{{ core.upf.helm.chart_ref }}"
+    values_files:
+      - /tmp/upf-{{item.key}}.yaml
+    wait: true
+    wait_timeout: "1m30s"
+    force: true
+  with_dict: "{{ core.upf.additional_upfs}}"  
+  when: inventory_hostname in groups['master_nodes']

@@ -1,0 +1,19 @@
+core:
+  data_iface: ens18
+  ran_subnet: "172.20.0.0/16"	# set to empty string to get subnet from 'data_iface'
+
+  upf:
+    helm:
+      chart_ref: aether/bess-upf
+    values_file: "roles/upf/templates/upf-5g-values.yaml"
+    additional_upfs:
+      "1":
+        ip:
+          access: "192.168.252.6/24"
+          core:   "192.168.250.6/24"
+        ue_ip_pool: "172.248.0.0/16"
+      # "2":
+      #   ip:
+      #     access: "192.168.252.7/24"
+      #     core:   "192.168.250.7/24"
+      #   ue_ip_pool: "172.248.0.0/16"

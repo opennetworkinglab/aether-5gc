@@ -36,3 +36,11 @@ export HOSTS_INI_FILE ?= $(5GC_ROOT_DIR)/hosts.ini
 5gc-core-uninstall:
 	ansible-playbook -i $(HOSTS_INI_FILE) $(5GC_ROOT_DIR)/core.yml --tags uninstall \
 		--extra-vars "ROOT_DIR=$(ROOT_DIR)" --extra-vars $(EXTRA_VARS)
+
+#### e. Provision Multiple UPF ###
+5gc-upf-install: 
+	ansible-playbook -i $(HOSTS_INI_FILE) $(5GC_ROOT_DIR)/upf.yml --tags install \
+		--extra-vars "ROOT_DIR=$(ROOT_DIR)" --extra-vars $(EXTRA_VARS)
+5gc-upf-uninstall:
+	ansible-playbook -i $(HOSTS_INI_FILE) $(5GC_ROOT_DIR)/upf.yml --tags uninstall \
+		--extra-vars "ROOT_DIR=$(ROOT_DIR)" --extra-vars $(EXTRA_VARS)
