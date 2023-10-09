@@ -10,6 +10,13 @@
     ran_subnet: "{{ result.stdout if (core.ran_subnet == '') else core.ran_subnet }}"
   when: inventory_hostname in groups['master_nodes']
 
+- name: remove /tmp/upf-[].yaml
+  file:
+    path: "/tmp/upf-{{ item.key }}.yaml"
+    state: absent
+  with_dict: "{{ core.upf.additional_upfs}}"
+  when: inventory_hostname in groups['master_nodes']
+
 - name: copy config files to gnbsim host
   template:
     src: "{{ ROOT_DIR }}/{{ core.upf.values_file }}"
@@ -20,7 +27,7 @@
     upf_core_ip:  "{{ item.value.ip.core }}"
     upf_ue_ip_pool: "{{ item.value.ue_ip_pool }}"
   with_dict: "{{ core.upf.additional_upfs}}"
-  when: inventory_hostname in groups['gnbsim_nodes']
+  when: inventory_hostname in groups['master_nodes']
 
 - name: deploy upf
   kubernetes.core.helm:
@@ -43,4 +50,4 @@
   when: inventory_hostname in groups['master_nodes']
   with_dict: "{{ core.upf.additional_upfs}}"  
   become: true
-  ignore_errors: yes
+  # ignore_errors: yes
