@@ -28,7 +28,6 @@ omec-control-plane:
     usePassword: false
     persistence:
       enabled: false
-    # Uncomment following 2 lines to enable cluster replication
     architecture: replicaset
     replicaCount: 2
   resources:
@@ -265,7 +264,7 @@ omec-sub-provision:
                     arp: 6
                     pdb: 300
                     pelr: 6
-              site-info: "aiab"
+              site-info: "enterprise"
             # UPF allocates IP address if there is only 1 device-group
             # SMF allocates IP address if there is >1 device-group
 
@@ -287,14 +286,14 @@ omec-sub-provision:
               site-info:
                 # Provide gNBs and UPF details and also PLMN for the site
                 gNodeBs:
-                - name: "aiab-gnb1"
+                - name: "gnb1"
                   tac: 1
-                - name: "aiab-gnb2"
+                - name: "gnb2"
                   tac: 2
                 plmn:
                   mcc: "208"
                   mnc: "93"
-                site-name: "aiab"
+                site-name: "enterprise"
                 upf:
                   upf-name: "upf"  # associated UPF for this slice. One UPF per Slice.
                   upf-port: 8805

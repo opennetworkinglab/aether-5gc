@@ -76,7 +76,7 @@
         values_files:
           - /tmp/sdcore-5g-values.yaml
         wait: true
-        wait_timeout: "1m30s"
+        wait_timeout: "2m30s"
         force: true
       when: inventory_hostname in groups['master_nodes']
 
@@ -102,4 +102,4 @@
       when: inventory_hostname in groups['master_nodes']
   always:
     - pause:
-        seconds: 180 
+        seconds: 120 
