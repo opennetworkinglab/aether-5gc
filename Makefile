@@ -5,7 +5,7 @@ export 5GC_ROOT_DIR ?= $(ROOT_DIR)
 
 export HOSTS_INI_FILE ?= $(5GC_ROOT_DIR)/hosts.ini
 
-# export EXTRA_VARS ?= "@$(5GC_ROOT_DIR)/vars/main.yml"
+export EXTRA_VARS ?= "@$(5GC_ROOT_DIR)/vars/main.yml"
 
 #### a. Debugging ####
 
