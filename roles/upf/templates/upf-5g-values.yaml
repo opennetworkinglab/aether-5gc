@@ -11,7 +11,8 @@ resources:
 images:
   repository: "registry.opennetworking.org/docker.io/"
   # uncomment following section to add update bess image tag
-  #tags:
+  tags:
+    tools: busybox:stable
   #  bess: <bess image tag>
   #  pfcpiface: <pfcp image tag>
 config:
