@@ -1,9 +1,9 @@
 ---
 
 - name: install 5gc/upf
-  include: roles/upf/tasks/install.yml
+  import_tasks: roles/upf/tasks/install.yml
   tags: install
 
 - name: uninstall 5gc/upf
-  include: roles/upf/tasks/uninstall.yml
+  import_tasks: roles/upf/tasks/uninstall.yml
   tags: uninstall
