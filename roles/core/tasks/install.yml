@@ -57,10 +57,10 @@
     dest: "/tmp/sdcore-5g-values.yaml"
   when: inventory_hostname in groups['master_nodes']
 
-# - name: update aether 5gc helm dependencies
-#   shell: |
-#     helm dep up "{{ core.helm.chart_ref }}"
-#   when: inventory_hostname in groups['master_nodes']
+- name: update aether 5gc helm dependencies
+  shell: |
+    helm dep up "{{ core.helm.chart_ref }}"
+  when: inventory_hostname in groups['master_nodes'] and core.helm.local_charts
 
 # TODO: add systems check to avoid issues (e.g., mongodb needing avx support)
 - name: deploy aether 5gc
