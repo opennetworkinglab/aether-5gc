@@ -102,4 +102,4 @@
       when: inventory_hostname in groups['master_nodes']
   always:
     - pause:
-        seconds: 120 
+        seconds: 60
