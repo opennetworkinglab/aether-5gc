@@ -46,6 +46,8 @@ omec-control-plane:
     mongodb:
       name: free5gc
       url: mongodb://mongodb-arbiter-headless #enable if cluster deployment required
+      authKeysDbName: authentication
+      authUrl: mongodb://mongodb-arbiter-headless
 
     managedByConfigPod:
       enabled: true
@@ -310,7 +312,7 @@ omec-user-plane:
     repository: "registry.opennetworking.org/docker.io/"
     # following two lines pull busybox from Docker Hub instead of Aether Registry
     tags:
-      tools: busybox:stable
+      tools: omecproject/busybox:stable
     # uncomment following section to add update bess image tag
     #tags:
     #  bess: <bess image tag>
@@ -334,7 +336,7 @@ omec-user-plane:
       core:
         iface: {{ core.data_iface }}
       cfgFiles:
-        upf.json:
+        upf.jsonc:
           mode: af_packet     # This mode implies no DPDK
           hwcksum: true
           log_level: "trace"
