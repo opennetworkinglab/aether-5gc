@@ -41,13 +41,13 @@
     wait: true
     wait_timeout: "1m30s"
     force: true
-  with_dict: "{{ core.upf.additional_upfs}}"  
+  with_dict: "{{ core.upf.additional_upfs}}"
   when: inventory_hostname in groups['master_nodes']
 
 - name: configure route for upf traffic on gnbsim node
   shell: |
     ip route add {{ item.value.ue_ip_pool }} via {{ item.value.ip.core[:-3] }}
   when: inventory_hostname in groups['master_nodes']
-  with_dict: "{{ core.upf.additional_upfs}}"  
+  with_dict: "{{ core.upf.additional_upfs}}"
   become: true
   # ignore_errors: yes

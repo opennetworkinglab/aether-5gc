@@ -1,6 +1,6 @@
 # 5gc
 
-The 5gc repository builds a standalone Aether core with a physical RAN setup. 
+The 5gc repository builds a standalone Aether core with a physical RAN setup.
 It depends a k8 cluster which can be deployed using k8 repository that can help to create a multi-node cluster.
 
 To set up the 5gc repository, you need to provide the following:

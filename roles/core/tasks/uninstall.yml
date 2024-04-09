@@ -60,4 +60,4 @@
     kubectl delete namespace omec
   when: inventory_hostname in groups['master_nodes']
   ignore_errors: yes
-  
+
