@@ -92,7 +92,7 @@
         while IFS= read -r line; do
           name=$(echo "$line" | awk '{print $1}')
           status=$(echo "$line" | awk '{print $3}')
-          
+
           if [[ "$status" != "Running" ]]; then
             kubectl delete pod "$name" -n omec
           fi

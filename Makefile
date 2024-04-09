@@ -22,7 +22,7 @@ export EXTRA_VARS ?= "@$(5GC_ROOT_DIR)/vars/main.yml"
 5gc-uninstall: 5gc-core-uninstall 5gc-router-uninstall
 
 #### c. Provision router ####
-5gc-router-install: 
+5gc-router-install:
 	ansible-playbook -i $(HOSTS_INI_FILE) $(5GC_ROOT_DIR)/router.yml --tags install \
 		--extra-vars "ROOT_DIR=$(ROOT_DIR)" --extra-vars $(EXTRA_VARS)
 5gc-router-uninstall:
@@ -30,7 +30,7 @@ export EXTRA_VARS ?= "@$(5GC_ROOT_DIR)/vars/main.yml"
 		--extra-vars "ROOT_DIR=$(ROOT_DIR)" --extra-vars $(EXTRA_VARS)
 
 #### d. Provision core ####
-5gc-core-install: 
+5gc-core-install:
 	ansible-playbook -i $(HOSTS_INI_FILE) $(5GC_ROOT_DIR)/core.yml --tags install \
 		--extra-vars "ROOT_DIR=$(ROOT_DIR)" --extra-vars $(EXTRA_VARS)
 5gc-core-uninstall:
@@ -40,7 +40,7 @@ export EXTRA_VARS ?= "@$(5GC_ROOT_DIR)/vars/main.yml"
 
 
 #### e. Provision Multiple UPF ###
-5gc-upf-install: 
+5gc-upf-install:
 	ansible-playbook -i $(HOSTS_INI_FILE) $(5GC_ROOT_DIR)/upf.yml --tags install \
 		--extra-vars "ROOT_DIR=$(ROOT_DIR)" --extra-vars $(EXTRA_VARS)
 5gc-upf-uninstall:

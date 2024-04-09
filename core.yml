@@ -3,7 +3,7 @@
 - name: provision core
   hosts: all
   gather_facts: true
-    
+
   vars_files:
     - "vars/main.yml"
 
