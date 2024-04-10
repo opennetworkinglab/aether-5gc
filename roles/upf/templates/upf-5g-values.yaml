@@ -31,9 +31,11 @@ config:
       subnet: {{ ran_subnet }} # Subnet for the gNB network
     access:
       iface: {{ core.data_iface }}
+      gateway: 192.168.252.1
       ip: {{ upf_access_ip }}
     core:
       iface: {{ core.data_iface }}
+      gateway: 192.168.250.1
       ip: {{ upf_core_ip }}
     cfgFiles:
       upf.jsonc:

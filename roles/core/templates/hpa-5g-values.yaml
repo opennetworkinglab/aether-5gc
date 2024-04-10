@@ -333,8 +333,12 @@ omec-user-plane:
         subnet: {{ ran_subnet }} # Subnet for the gNB network
       access:
         iface: {{ core.data_iface }}
+        gateway: 192.168.252.1
+        ip: 192.168.252.3/24
       core:
         iface: {{ core.data_iface }}
+        gateway: 192.168.250.1
+        ip: 192.168.250.3/24
       cfgFiles:
         upf.jsonc:
           mode: af_packet     # This mode implies no DPDK
