@@ -16,7 +16,7 @@ omec-control-plane:
 5g-control-plane:
   enable5G: true
   images:
-    repository: "registry.opennetworking.org/docker.io/"
+    repository: ""    # defaults to Docker Hub
     #tags:
     #  amf: <amf image tag>
     # refer to above Helm Chart to add other NF images
@@ -111,7 +111,7 @@ omec-control-plane:
 omec-sub-provision:
   enable: true
   images:
-    repository: "registry.opennetworking.org/docker.io/"
+    repository: ""    # defaults to Docker Hub
     #tags:
     #  simapp: #add simapp override image
 
@@ -309,7 +309,7 @@ omec-user-plane:
   resources:
     enabled: false
   images:
-    repository: "registry.opennetworking.org/docker.io/"
+    repository: ""    # defaults to Docker Hub
     # following two lines pull busybox from Docker Hub instead of Aether Registry
     tags:
       tools: omecproject/busybox:stable
