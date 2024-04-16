@@ -9,14 +9,6 @@
   when: inventory_hostname in groups['master_nodes']
   ignore_errors: yes
 
-- name: remove rancher chart repo
-  kubernetes.core.helm_repository:
-    name: rancher
-    state: absent
-    repo_url: "http://charts.rancher.io/"
-  when: inventory_hostname in groups['master_nodes']
-  ignore_errors: yes
-
 - name: remove aether chart repo
   kubernetes.core.helm_repository:
     name: aether

@@ -12,12 +12,6 @@
     repo_url: "https://charts.aetherproject.org"
   when: inventory_hostname in groups['master_nodes']
 
-- name: add rancher chart repo
-  kubernetes.core.helm_repository:
-    name: rancher
-    repo_url: "http://charts.rancher.io/"
-  when: inventory_hostname in groups['master_nodes']
-
 - name: find {{ core.data_iface }}'s subnet for RAN
   shell: ip route | grep {{ core.data_iface }} | awk '/kernel/ {print $1}' | head -1
   register: result
