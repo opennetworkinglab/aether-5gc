@@ -245,9 +245,9 @@ omec-sub-provision:
                 mtu: 1460                     # Value is sent to UE when PDU Session Established
                 ue-ip-pool: "172.250.1.0/16"  # IP address pool for subscribers
                 ue-dnn-qos:
-                  dnn-mbr-downlink: 200000000 # UE level downlink QoS
-                  dnn-mbr-uplink:    20000000 # UE level uplink QoS
-                  bitrate-unit: bps           # Unit for above QoS rates
+                  dnn-mbr-downlink: 500       # UE level downlink QoS (Maximum bit rate per UE)
+                  dnn-mbr-uplink:   500       # UE level uplink QoS (Maximum bit rate per UE)
+                  bitrate-unit: Mbps          # Unit for above QoS rates
                   traffic-class:              # Default bearer QCI/ARP (not used in 5G)
                     name: "platinum"
                     qci: 9
@@ -329,15 +329,22 @@ omec-user-plane:
         ip: 192.168.250.3/24
       cfgFiles:
         upf.jsonc:
-          mode: af_packet     # This mode implies no DPDK
+          mode: af_packet                # This mode implies no DPDK
           hwcksum: true
           log_level: "trace"
           measure_upf: true
           measure_flow: true
-          gtppsc: true        # Extension header enabled in 5G.
+          gtppsc: true                   # Extension header enabled in 5G.
           cpiface:
             dnn: "internet"              # Must match Slice dnn
             hostname: "upf"
             #http_port: "8080"
             enable_ue_ip_alloc: false    # If true, UPF allocates address from following pool
             ue_ip_pool: "172.250.0.0/16" # IP pool used UEs if enable_ue_ip_alloc=true
+          slice_rate_limit_config:       # Slice-level rate limiting (also controlled by ROC)
+            # Uplink
+            n6_bps: 10000000000          # 10Gbps
+            n6_burst_bytes: 12500000     # 10ms * 10Gbps
+            # Downlink
+            n3_bps: 10000000000          # 10Gbps
+            n3_burst_bytes: 12500000     # 10ms * 10Gbps
