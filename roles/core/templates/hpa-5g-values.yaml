@@ -57,7 +57,7 @@ omec-control-plane:
       deploy: true # if enabled then deploy sctp pod.
                     # Once backend is stable, this option will be enabled by default
       ngapp:
-        externalIp: {{ ansible_default_ipv4.address }}
+        externalIp: {{ core.amf.ip }}
         port: 38412
 
     upfadapter:
