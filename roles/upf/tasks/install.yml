@@ -29,6 +29,11 @@
   with_dict: "{{ core.upf.additional_upfs}}"
   when: inventory_hostname in groups['master_nodes']
 
+- name: update helm dependencies
+  shell: |
+    helm dep up "{{ core.helm.chart_ref }}"
+  when: inventory_hostname in groups['master_nodes'] and core.helm.local_charts
+
 - name: deploy upf
   kubernetes.core.helm:
     update_repo_cache: true
