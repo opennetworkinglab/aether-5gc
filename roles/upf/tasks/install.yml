@@ -41,6 +41,7 @@
     release_namespace: omec-upf-{{ item.key }}
     create_namespace: true
     chart_ref: "{{ core.upf.helm.chart_ref }}"
+    chart_version: "{{ core.upf.helm.chart_version }}"
     values_files:
       - /tmp/upf-{{item.key}}.yaml
     wait: true
