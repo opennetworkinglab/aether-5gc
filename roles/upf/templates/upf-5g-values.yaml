@@ -4,7 +4,7 @@
 # SPDX-License-Identifier: Apache-2.0
 
 # Override values for omec-user-plane Helm Chart
-# https://gerrit.opencord.org/sdfabric-helm-charts/bess-upf/values.yaml
+# https://github.com/omec-project/sdcore-helm-charts/blob/main/bess-upf/values.yaml
 enable: true
 resources:
   enabled: false
