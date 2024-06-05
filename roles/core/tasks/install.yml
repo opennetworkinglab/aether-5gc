@@ -39,9 +39,15 @@
     dest: "/tmp/sdcore-5g-values.yaml"
   when: inventory_hostname in groups['master_nodes']
 
+- name: copy local_charts "{{ core.helm.chart_ref }}" to /tmp/sdcore-helm-charts
+  copy:
+    src: "{{ core.helm.chart_ref }}/"
+    dest: /tmp/sdcore-helm-charts
+  when: inventory_hostname in groups['master_nodes'] and core.helm.local_charts
+
 - name: update aether 5gc helm dependencies
   shell: |
-    helm dep up "{{ core.helm.chart_ref }}"
+    helm dep up /tmp/sdcore-helm-charts
   when: inventory_hostname in groups['master_nodes'] and core.helm.local_charts
 
 # TODO: add systems check to avoid issues (e.g., mongodb needing avx support)
@@ -53,7 +59,7 @@
         name: sd-core
         release_namespace: omec
         create_namespace: true
-        chart_ref: "{{ core.helm.chart_ref }}"
+        chart_ref: "{{ core.helm.chart_ref if core.helm.local_charts == false else '/tmp/sdcore-helm-charts' }}"
         chart_version: "{{ core.helm.chart_version }}"
         values_files:
           - /tmp/sdcore-5g-values.yaml

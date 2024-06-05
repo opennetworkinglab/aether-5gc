@@ -1,5 +1,12 @@
 ---
 
+- name: delete {{ systemd_network_dir }}/{{ result.stdout }}.d
+  file:
+    path: /tmp/sdcore-helm-charts/
+    state: absent
+  when: inventory_hostname in groups['master_nodes']  and core.helm.local_charts
+  ignore_errors: yes
+
 - name: remove aether 5gc
   kubernetes.core.helm:
     name: sd-core
