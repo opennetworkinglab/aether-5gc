@@ -1,6 +1,6 @@
 ---
 
-- name: delete {{ systemd_network_dir }}/{{ result.stdout }}.d
+- name: delete local charts from /tmp/sdcore-helm-charts/
   file:
     path: /tmp/sdcore-helm-charts/
     state: absent
