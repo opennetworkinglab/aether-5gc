@@ -297,7 +297,8 @@ omec-user-plane:
   nodeSelectors:
     enabled: true
   resources:
-    enabled: false
+    enabled: {{ core.upf.sriov }}
+    privileged: {{ core.upf.sriov }}
   images:
     repository: ""    # defaults to Docker Hub
     # following two lines pull busybox from Docker Hub instead of Aether Registry
@@ -310,11 +311,12 @@ omec-user-plane:
   config:
     upf:
       name: "oaisim"
+      privileged: {{ core.upf.sriov }}
       sriov:
-        enabled: false    # SRIOV is disabled by default
+        enabled: {{ core.upf.sriov }}       # SRIOV is disabled by default
       hugepage:
-        enabled: false    # Should be enabled if DPDK is enabled
-      cniPlugin: macvlan  # Can be any other plugin. Dictates how IP address are assigned
+        enabled: {{ core.upf.sriov }}       # Should be enabled if DPDK is enabled
+      cniPlugin: {{ core.upf.cniPlugin }}   # Can be any other plugin. Dictates how IP address are assigned
       ipam: static
       routes:
         - to: {{ ansible_default_ipv4.address }}
@@ -323,20 +325,23 @@ omec-user-plane:
         subnet: {{ ran_subnet }} # Subnet for the gNB network
       access:
         iface: {{ core.data_iface }}
+        resourceName: "intel.com/intel_sriov_vfio_access"
         gateway: 192.168.252.1
         ip: 192.168.252.3/24
       core:
         iface: {{ core.data_iface }}
+        resourceName: "intel.com/intel_sriov_vfio_core"
         gateway: 192.168.250.1
         ip: 192.168.250.3/24
       cfgFiles:
         upf.jsonc:
-          mode: af_packet                # This mode implies no DPDK
+          mode: {{ core.upf.mode }}
           hwcksum: true
           log_level: "trace"
           measure_upf: true
           measure_flow: true
           gtppsc: true                   # Extension header enabled in 5G.
+          ddp: {{ core.upf.ddp }}
           cpiface:
             dnn: "internet"              # Must match Slice dnn
             hostname: "upf"
