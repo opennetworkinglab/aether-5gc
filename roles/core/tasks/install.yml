@@ -45,7 +45,7 @@
 
 - debug:
     var: "chart_ref_sd_core"
-  when: inventory_hostname in groups['master_nodes'] and core.helm.local_charts 
+  when: inventory_hostname in groups['master_nodes'] and core.helm.local_charts
 
 - name: copy local_charts "{{ chart_ref_sd_core }}" to /tmp/sdcore-helm-charts
   synchronize:
