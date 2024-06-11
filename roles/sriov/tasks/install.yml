@@ -1,0 +1,88 @@
+---
+
+# TODO: running on master node for now (fix to run on multiple nodes)
+
+- name: check VF resources and bind them to vfio-pci
+  block:
+    - name: Get number of VF's available for the "{{ core.data_iface }}"
+      shell: ip link show "{{ core.data_iface }}"|grep -c vf
+      register: vf_status
+      changed_when: false
+
+    - debug:
+         var=vf_status.stdout
+
+    - name: verify the required VF resourses available in "{{ core.data_iface }}"
+      ansible.builtin.assert:
+        that:
+          - vf_status.stdout | int >= 2
+
+    - name: check if "{{ core.upf.pci_devices[0] }}" attached to vfio-pci
+      shell: driverctl -v list-overrides |grep 'vfio-pci'|grep {{ core.upf.pci_devices[0] }}|wc -l
+      register: vf_status
+      changed_when: false
+
+    - name: Attach "{{ core.upf.pci_devices[0] }}" to vfio-pci
+      shell: driverctl set-override {{ core.upf.pci_devices[0] }} vfio-pci
+      changed_when: false
+      become: true
+      when: vf_status.stdout | int != 1
+
+    - pause:
+        seconds: 5
+
+    - name: check if "{{ core.upf.pci_devices[1] }}" attached to vfio-pci
+      shell: driverctl -v list-overrides |grep 'vfio-pci'|grep {{ core.upf.pci_devices[1] }}|wc -l
+      register: vf_status
+      changed_when: false
+
+    - name: Attach "{{ core.upf.pci_devices[1] }}" to vfio-pci
+      shell: driverctl set-override {{ core.upf.pci_devices[1] }} vfio-pci
+      changed_when: false
+      become: true
+      when: vf_status.stdout | int != 1
+
+    - pause:
+        seconds: 5
+
+  when: inventory_hostname in groups['master_nodes'] and core.upf.enable_resources
+
+- name: deploy sriov plugins
+  block:
+    - name: copy sriov-device-plugin.yaml to /tmp/sriov-device-plugin.yaml
+      template:
+        src: roles/sriov/templates/sriov-device-plugin.yaml
+        dest: "/tmp/sriov-device-plugin.yaml"
+
+    - name: copy sriov-device-plugin-config.yaml to /tmp/sriov-device-plugin-config.yaml
+      template:
+        src: roles/sriov/templates/sriov-device-plugin-config.yaml
+        dest: "/tmp/sriov-device-plugin-config.yaml"
+
+    - name: update proper data interface name in /tmp/sriov-device-plugin-config.yaml
+      shell: sed -i -e "s/PFDEV/{{ core.data_iface }}/g" /tmp/sriov-device-plugin-config.yaml
+
+    - name: apply /tmp/sriov-device-plugin.yaml
+      shell: kubectl apply -f /tmp/sriov-device-plugin.yaml
+
+    - name: apply /tmp/sriov-device-plugin-config.yaml
+      shell: kubectl apply -f /tmp/sriov-device-plugin-config.yaml
+
+    - name: Get Sriov Pods Status
+      shell: kubectl get pods -A |grep sriov
+      register: pod_status
+      changed_when: false
+
+    - name: restart sriov Pod
+      shell: |
+        while IFS= read -r line; do
+          name=$(echo "$line" | awk '{print $2}')
+          status=$(echo "$line" | awk '{print $4}')
+
+          kubectl delete pod "$name"
+        done <<< "{{ pod_status.stdout }}"
+      args:
+        executable: /bin/bash
+    - pause:
+        seconds: 10    
+  when: inventory_hostname in groups['master_nodes'] and core.upf.enable_resources

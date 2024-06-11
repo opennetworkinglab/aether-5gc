@@ -1,0 +1,12 @@
+---
+
+# TODO: running on master node for now (fix to run on multiple nodes)
+
+- name: remove sriov plugin files in /tmp
+  file:
+    path: '{{ item }}'
+    state: absent
+  with_items:
+    - /tmp/sriov-device-plugin.yaml
+    - /tmp/sriov-device-plugin-config.yaml
+  when: inventory_hostname in groups['master_nodes'] and core.upf.enable_resources

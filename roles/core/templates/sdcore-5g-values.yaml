@@ -297,8 +297,8 @@ omec-user-plane:
   nodeSelectors:
     enabled: true
   resources:
-    enabled: {{ core.upf.sriov }}
-    privileged: {{ core.upf.sriov }}
+    enabled: {{ core.upf.enable_resources }}
+    privileged: {{ core.upf.enable_resources }}
   images:
     repository: ""    # defaults to Docker Hub
     # following two lines pull busybox from Docker Hub instead of Aether Registry
@@ -311,11 +311,11 @@ omec-user-plane:
   config:
     upf:
       name: "oaisim"
-      privileged: {{ core.upf.sriov }}
+      privileged: {{ core.upf.enable_resources }}
       sriov:
-        enabled: {{ core.upf.sriov }}       # SRIOV is disabled by default
+        enabled: {{ core.upf.enable_resources }}       # SRIOV is disabled by default
       hugepage:
-        enabled: {{ core.upf.sriov }}       # Should be enabled if DPDK is enabled
+        enabled: {{ core.upf.enable_resources }}    # Should be enabled if DPDK is enabled
       cniPlugin: {{ core.upf.cniPlugin }}   # Can be any other plugin. Dictates how IP address are assigned
       ipam: static
       routes:
@@ -341,6 +341,10 @@ omec-user-plane:
           measure_upf: true
           measure_flow: true
           gtppsc: true                   # Extension header enabled in 5G.
+          # DDP is INTEL NIC's specific feature (supported in E810 series)
+          # which helps to improve UPF packet processing performance.
+          # For more details on DDP feature and its usage please refer
+          # "https://www.intel.com/content/www/us/en/download/19660/intel-ethernet-800-series-dynamic-device-personalization-ddp-for-telecommunication-comms-package.html"
           ddp: {{ core.upf.ddp }}
           cpiface:
             dnn: "internet"              # Must match Slice dnn
