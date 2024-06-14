@@ -9,4 +9,4 @@
   with_items:
     - /tmp/sriov-device-plugin.yaml
     - /tmp/sriov-device-plugin-config.yaml
-  when: inventory_hostname in groups['master_nodes'] and core.upf.enable_resources
+  when: inventory_hostname in groups['master_nodes'] and core.upf.mode == "dpdk"

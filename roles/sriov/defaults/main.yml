@@ -1,7 +1,4 @@
 core:
   data_iface: data
   upf:
-    mode: af_packet
-    sriov: false
-    cniPlugin: macvlan
-    ddp: false
+    mode: dpdk

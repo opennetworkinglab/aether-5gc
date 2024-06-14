@@ -297,7 +297,8 @@ omec-user-plane:
   nodeSelectors:
     enabled: true
   resources:
-    enabled: false
+    enabled: true
+    privileged: true
   images:
     repository: ""    # defaults to Docker Hub
     # following two lines pull busybox from Docker Hub instead of Aether Registry
@@ -310,11 +311,12 @@ omec-user-plane:
   config:
     upf:
       name: "oaisim"
+      privileged: true
       sriov:
-        enabled: false    # SRIOV is disabled by default
+        enabled: true    # SRIOV is enabled
       hugepage:
-        enabled: false    # Should be enabled if DPDK is enabled
-      cniPlugin: macvlan  # Can be any other plugin. Dictates how IP address are assigned
+        enabled: true    # Should be enabled if DPDK is enabled
+      cniPlugin: vfioveth    # Can be any other plugin. Dictates how IP address are assigned
       ipam: static
       routes:
         - to: {{ ansible_default_ipv4.address }}
@@ -323,20 +325,27 @@ omec-user-plane:
         subnet: {{ ran_subnet }} # Subnet for the gNB network
       access:
         iface: {{ core.data_iface }}
+        resourceName: "intel.com/intel_sriov_vfio_access"
         gateway: 192.168.252.1
         ip: 192.168.252.3/24
       core:
         iface: {{ core.data_iface }}
+        resourceName: "intel.com/intel_sriov_vfio_core"
         gateway: 192.168.250.1
         ip: 192.168.250.3/24
       cfgFiles:
         upf.jsonc:
-          mode: af_packet                # This mode implies no DPDK
+          mode: dpdk
           hwcksum: true
           log_level: "trace"
           measure_upf: true
           measure_flow: true
           gtppsc: true                   # Extension header enabled in 5G.
+          # DDP is INTEL NIC's specific feature (supported in E810 series)
+          # which helps to improve UPF packet processing performance.
+          # For more details on DDP feature and its usage please refer
+          # "https://www.intel.com/content/www/us/en/download/19660/intel-ethernet-800-series-dynamic-device-personalization-ddp-for-telecommunication-comms-package.html"
+          ddp: false                     # this parameter is only used/relevant when deploying the UPF in 'dpdk' mode
           cpiface:
             dnn: "internet"              # Must match Slice dnn
             hostname: "upf"

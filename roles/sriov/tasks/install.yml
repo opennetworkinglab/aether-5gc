@@ -5,7 +5,7 @@
 - name: check VF resources and bind them to vfio-pci
   block:
     - name: Get number of VF's available for the "{{ core.data_iface }}"
-      shell: ip link show "{{ core.data_iface }}"|grep -c vf
+      shell: ip link show "{{ core.data_iface }}" | grep -c vf
       register: vf_status
       changed_when: false
 
@@ -17,35 +17,20 @@
         that:
           - vf_status.stdout | int >= 2
 
-    - name: check if "{{ core.upf.pci_devices[0] }}" attached to vfio-pci
-      shell: driverctl -v list-overrides |grep 'vfio-pci'|grep {{ core.upf.pci_devices[0] }}|wc -l
+    - name: Get number of VF's attached to vfio-pci driver
+      shell: driverctl -v list-overrides | grep 'vfio-pci' | wc -l
       register: vf_status
       changed_when: false
 
-    - name: Attach "{{ core.upf.pci_devices[0] }}" to vfio-pci
-      shell: driverctl set-override {{ core.upf.pci_devices[0] }} vfio-pci
-      changed_when: false
-      become: true
-      when: vf_status.stdout | int != 1
+    - debug:
+         var=vf_status.stdout
 
-    - pause:
-        seconds: 5
+    - name: verify at least two VF resourses attached to vfio-pci driver
+      ansible.builtin.assert:
+        that:
+          - vf_status.stdout | int >= 2
 
-    - name: check if "{{ core.upf.pci_devices[1] }}" attached to vfio-pci
-      shell: driverctl -v list-overrides |grep 'vfio-pci'|grep {{ core.upf.pci_devices[1] }}|wc -l
-      register: vf_status
-      changed_when: false
-
-    - name: Attach "{{ core.upf.pci_devices[1] }}" to vfio-pci
-      shell: driverctl set-override {{ core.upf.pci_devices[1] }} vfio-pci
-      changed_when: false
-      become: true
-      when: vf_status.stdout | int != 1
-
-    - pause:
-        seconds: 5
-
-  when: inventory_hostname in groups['master_nodes'] and core.upf.enable_resources
+  when: inventory_hostname in groups['master_nodes'] and core.upf.mode == "dpdk"
 
 - name: deploy sriov plugins
   block:
@@ -69,7 +54,7 @@
       shell: kubectl apply -f /tmp/sriov-device-plugin-config.yaml
 
     - name: Get Sriov Pods Status
-      shell: kubectl get pods -A |grep sriov
+      shell: kubectl get pods -A | grep sriov
       register: pod_status
       changed_when: false
 
@@ -85,4 +70,4 @@
         executable: /bin/bash
     - pause:
         seconds: 10    
-  when: inventory_hostname in groups['master_nodes'] and core.upf.enable_resources
+  when: inventory_hostname in groups['master_nodes'] and core.upf.mode == "dpdk"
