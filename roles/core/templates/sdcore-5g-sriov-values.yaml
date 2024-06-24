@@ -298,7 +298,6 @@ omec-user-plane:
     enabled: true
   resources:
     enabled: true
-    privileged: true
   images:
     repository: ""    # defaults to Docker Hub
     # following two lines pull busybox from Docker Hub instead of Aether Registry
