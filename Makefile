@@ -19,7 +19,7 @@ export EXTRA_VARS ?= "@$(5GC_ROOT_DIR)/vars/main.yml"
 
 #### b. Provision k8s ####
 5gc-install: 5gc-router-install 5gc-sriov-install 5gc-core-install
-5gc-uninstall: 5gc-core-uninstall 5gc-sriov-uninstall 5gc-router-uninstall
+5gc-uninstall: 5gc-core-uninstall 5gc-router-uninstall
 
 #### c. Provision router ####
 5gc-router-install:
@@ -32,9 +32,6 @@ export EXTRA_VARS ?= "@$(5GC_ROOT_DIR)/vars/main.yml"
 #### d. Provision sriov ####
 5gc-sriov-install:
 	ansible-playbook -i $(HOSTS_INI_FILE) $(5GC_ROOT_DIR)/sriov.yml --tags install \
-		--extra-vars "ROOT_DIR=$(ROOT_DIR)" --extra-vars $(EXTRA_VARS)
-5gc-sriov-uninstall:
-	ansible-playbook -i $(HOSTS_INI_FILE) $(5GC_ROOT_DIR)/sriov.yml --tags uninstall \
 		--extra-vars "ROOT_DIR=$(ROOT_DIR)" --extra-vars $(EXTRA_VARS)
 
 #### e. Provision core ####

@@ -3,7 +3,3 @@
 - name: install 5gc/sriov
   import_tasks: roles/sriov/tasks/install.yml
   tags: install
-
-- name: uninstall 5gc/sriov
-  import_tasks: roles/sriov/tasks/uninstall.yml
-  tags: uninstall
