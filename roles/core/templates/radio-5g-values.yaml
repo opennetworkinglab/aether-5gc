@@ -142,8 +142,8 @@ omec-sub-provision:
                 mtu: 1460                     # Value is sent to UE when PDU Session Established
                 ue-ip-pool: "172.250.1.0/16"  # IP address pool for subscribers
                 ue-dnn-qos:
-                  dnn-mbr-downlink: 500       # UE level downlink QoS (Maximum bit rate per UE)
-                  dnn-mbr-uplink:   500       # UE level uplink QoS (Maximum bit rate per UE)
+                  dnn-mbr-downlink: 1000      # UE level downlink QoS (Maximum bit rate per UE)
+                  dnn-mbr-uplink:   1000      # UE level uplink QoS (Maximum bit rate per UE)
                   bitrate-unit: Mbps          # Unit for above QoS rates
                   traffic-class:              # Default bearer QCI/ARP (not used in 5G)
                     name: "platinum"
@@ -209,18 +209,20 @@ omec-user-plane:
         enabled: false    # SRIOV is disabled by default
       hugepage:
         enabled: false    # Should be enabled if DPDK is enabled
-      cniPlugin: macvlan  # Can be any other plugin. Dictates how IP address are assigned
-      ipam: static
       routes:
         - to: {{ ansible_default_ipv4.address }}
           via: 169.254.1.1
       enb:
         subnet: {{ ran_subnet }} # Subnet for the gNB network
       access:
+        ipam: static
+        cniPlugin: macvlan  # Can be any other plugin. Dictates how IP address are assigned
         iface: {{ core.data_iface }}
         gateway: 192.168.252.1
         ip: 192.168.252.3/24
       core:
+        ipam: static
+        cniPlugin: macvlan  # Can be any other plugin. Dictates how IP address are assigned
         iface: {{ core.data_iface }}
         gateway: 192.168.250.1
         ip: 192.168.250.3/24
