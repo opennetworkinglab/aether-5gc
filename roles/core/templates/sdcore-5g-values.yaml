@@ -314,7 +314,6 @@ omec-user-plane:
         enabled: false    # SRIOV is disabled by default
       hugepage:
         enabled: false    # Should be enabled if DPDK is enabled
-      cniPlugin: macvlan  # Can be any other plugin. Dictates how IP address are assigned
       ipam: static
       routes:
         - to: {{ ansible_default_ipv4.address }}
@@ -322,10 +321,12 @@ omec-user-plane:
       enb:
         subnet: {{ ran_subnet }} # Subnet for the gNB network
       access:
+        cniPlugin: macvlan  # Can be any other plugin. Dictates how IP address are assigned
         iface: {{ core.data_iface }}
         gateway: 192.168.252.1
         ip: 192.168.252.3/24
       core:
+        cniPlugin: macvlan  # Can be any other plugin. Dictates how IP address are assigned
         iface: {{ core.data_iface }}
         gateway: 192.168.250.1
         ip: 192.168.250.3/24
