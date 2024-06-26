@@ -315,19 +315,21 @@ omec-user-plane:
         enabled: true    # SRIOV is enabled
       hugepage:
         enabled: true    # Should be enabled if DPDK is enabled
-      cniPlugin: vfioveth    # Can be any other plugin. Dictates how IP address are assigned
-      ipam: static
       routes:
         - to: {{ ansible_default_ipv4.address }}
           via: 169.254.1.1
       enb:
         subnet: {{ ran_subnet }} # Subnet for the gNB network
       access:
+        ipam: static
+        cniPlugin: vfioveth    # Can be any other plugin. Dictates how IP address are assigned
         iface: {{ core.data_iface }}
         resourceName: "intel.com/intel_sriov_vfio_access"
         gateway: 192.168.252.1
         ip: 192.168.252.3/24
       core:
+        ipam: static
+        cniPlugin: vfioveth    # Can be any other plugin. Dictates how IP address are assigned
         iface: {{ core.data_iface }}
         resourceName: "intel.com/intel_sriov_vfio_core"
         gateway: 192.168.250.1
