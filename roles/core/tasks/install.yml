@@ -64,6 +64,11 @@
     var: "chart_ref_sd_core"
   when: inventory_hostname in groups['master_nodes'] and core.helm.local_charts
 
+- name: update aether 5gc-cp helm dependencies
+  shell: |
+    helm dep up /tmp/sdcore-helm-charts/5g-control-plane
+  when: inventory_hostname in groups['master_nodes'] and core.helm.local_charts
+
 - name: update aether 5gc helm dependencies
   shell: |
     helm dep up {{chart_ref_sd_core}}
