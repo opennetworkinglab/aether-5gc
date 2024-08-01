@@ -20,7 +20,7 @@
 
 - name: delete namespace omec-upf
   shell: |
-    "kubectl delete namespace omec-upf-{{ item.key }}"
+    kubectl delete namespace omec-upf-{{ item.key }}
   with_dict: "{{ core.upf.additional_upfs}}"
   when: inventory_hostname in groups['master_nodes']
   ignore_errors: yes
