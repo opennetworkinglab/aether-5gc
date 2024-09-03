@@ -60,7 +60,7 @@ omec-control-plane:
         port: 38412
 
     upfadapter:
-      deploy: true # If enabled then deploy upf adapter pod
+      deploy: false # If enabled then deploy upf adapter pod
 
     metricfunc:
       deploy: true
