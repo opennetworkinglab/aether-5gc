@@ -230,7 +230,7 @@ omec-user-plane:
         upf.jsonc:
           mode: af_packet                # This mode implies no DPDK
           hwcksum: true
-          log_level: "trace"
+          log_level: "info"
           measure_upf: true
           measure_flow: true
           gtppsc: true                   # Extension header enabled in 5G.
