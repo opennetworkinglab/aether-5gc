@@ -22,7 +22,7 @@ To install the 5g-core, follow these steps:
    - Set the "values_file" parameter:
      - Use "sdcore-5g-values.yaml" for a stateful 5g core.
      - Use "hpa-5g-values.yaml" for a stateless 5g core.
-   - The "custom_ran_subnet" parameter if left empty, core will use the subnet of "data_iface" for UPF.
+   - The "ran_subnet" parameter if left empty, core will use the subnet of "data_iface" for UPF.
 2. Add the hosts to the init file.
 3. Run `make ansible`.
 4. In the running Ansible docker terminal:

@@ -7,7 +7,7 @@
   become: true
 
 - set_fact:
-    ran_subnet: "{{ result.stdout if (core.ran_subnet == '') else core.ran_subnet }}"
+    ran_subnet: "{{ result.stdout if (aether.ran_subnet == '') else aether.ran_subnet }}"
   when: inventory_hostname in groups['master_nodes']
 
 - name: remove /tmp/upf-[].yaml
