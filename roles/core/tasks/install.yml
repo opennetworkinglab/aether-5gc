@@ -1,11 +1,5 @@
 ---
 
-- name: add cord chart repo
-  kubernetes.core.helm_repository:
-    name: cord
-    repo_url: "https://charts.opencord.org"
-  when: inventory_hostname in groups['master_nodes'] and not core.helm.local_charts
-
 - name: add aether chart repo
   kubernetes.core.helm_repository:
     name: aether
