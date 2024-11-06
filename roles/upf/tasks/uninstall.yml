@@ -2,7 +2,7 @@
 
 - name: delete route for upf to UE
   shell: |
-    ip route del {{ item.value.ue_ip_pool }} via {{ item.value.ip.core[:-3] }}
+    ip route del {{ item.value.ue_ip_pool }} via {{ item.value.ip.core }}
   when: inventory_hostname in groups['master_nodes']
   with_dict: "{{ core.upf.additional_upfs}}"
   become: true
