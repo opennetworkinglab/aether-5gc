@@ -28,11 +28,12 @@
   when: inventory_hostname in groups['master_nodes']
 
 - debug:
-    var: "ran_subnet"
-    var: "core_gw"
-    var: "access_gw"
-    var: "core_ip"
-    var: "access_ip"
+    var:
+      - ran_subnet
+      - core_gw
+      - access_gw
+      - core_ip
+      - access_ip
   when: inventory_hostname in groups['master_nodes']
 
 - name: remove /tmp/sdcore-5g-values.yaml
