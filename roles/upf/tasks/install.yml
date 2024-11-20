@@ -23,8 +23,10 @@
     dest: /tmp/upf-{{ item.key }}.yaml
   vars:
     ran_subnet: "{{ran_subnet}}"
-    upf_access_ip: "{{ item.value.ip.access }}"
-    upf_core_ip:  "{{ item.value.ip.core }}"
+    access_gw: "{{ core.upf.access_subnet[:-3] }}"
+    core_gw: "{{ core.upf.core_subnet[:-3] }}"
+    upf_access_ip: "{{ item.value.ip.access + '/24' }}"
+    upf_core_ip: "{{ item.vaule.ip.core + '/24' }}"
     upf_ue_ip_pool: "{{ item.value.ue_ip_pool }}"
   with_dict: "{{ core.upf.additional_upfs}}"
   when: inventory_hostname in groups['master_nodes']

@@ -28,7 +28,7 @@
   when: inventory_hostname in groups['master_nodes']
 
 - debug:
-    var: hostvars[inventory_hostname]
+    var: ran_subnet
   when: inventory_hostname in groups['master_nodes']
 
 - name: remove /tmp/sdcore-5g-values.yaml
