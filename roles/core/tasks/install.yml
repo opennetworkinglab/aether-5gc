@@ -75,7 +75,7 @@
       kubernetes.core.helm:
         update_repo_cache: true
         name: sd-core
-        release_namespace: omec
+        release_namespace: aether-5gc
         create_namespace: true
         chart_ref: "{{ core.helm.chart_ref if core.helm.local_charts == false else chart_ref_sd_core }}"
         chart_version: "{{ core.helm.chart_version }}"
@@ -88,7 +88,7 @@
 
   rescue:
     - name: Get Pods Status
-      shell: kubectl get po -n omec
+      shell: kubectl get po -n aether-5gc
       register: pod_status
       changed_when: false
       when: inventory_hostname in groups['master_nodes']
@@ -100,7 +100,7 @@
           status=$(echo "$line" | awk '{print $3}')
 
           if [[ "$status" != "Running" ]]; then
-            kubectl delete pod "$name" -n omec
+            kubectl delete pod "$name" -n aether-5gc
           fi
         done <<< "{{ pod_status.stdout }}"
       args:
