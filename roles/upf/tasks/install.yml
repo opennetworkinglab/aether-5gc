@@ -38,7 +38,7 @@
   kubernetes.core.helm:
     update_repo_cache: true
     name: bess-upf
-    release_namespace: omec-upf-{{ item.key }}
+    release_namespace: aether-5gc-upf-{{ item.key }}
     create_namespace: true
     chart_ref: "{{ core.upf.helm.chart_ref }}"
     chart_version: "{{ core.upf.helm.chart_version }}"

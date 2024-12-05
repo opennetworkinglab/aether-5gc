@@ -11,16 +11,16 @@
 - name: remove aether upfs
   kubernetes.core.helm:
     name: bess-upf
-    release_namespace: omec-upf-{{ item.key }}
+    release_namespace: aether-5gc-upf-{{ item.key }}
     state: absent
     wait: true
   with_dict: "{{ core.upf.additional_upfs}}"
   when: inventory_hostname in groups['master_nodes']
   ignore_errors: yes
 
-- name: delete namespace omec-upf
+- name: delete namespace aether-5gc-upf
   shell: |
-    kubectl delete namespace omec-upf-{{ item.key }}
+    kubectl delete namespace aether-5gc-upf-{{ item.key }}
   with_dict: "{{ core.upf.additional_upfs}}"
   when: inventory_hostname in groups['master_nodes']
   ignore_errors: yes
