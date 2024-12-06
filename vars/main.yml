@@ -7,7 +7,7 @@ core:
   helm:
     local_charts: false
     chart_ref: aether/sd-core
-    chart_version: 1.0.4
+    chart_version: 2.0.0
 
   upf:
     access_subnet: "192.168.252.1/24"	# access subnet & gateway

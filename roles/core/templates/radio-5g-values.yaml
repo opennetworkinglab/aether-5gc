@@ -30,6 +30,7 @@ omec-control-plane:
       enabled: false
     architecture: replicaset
     replicaCount: 2
+
   resources:
     enabled: false
 
@@ -38,10 +39,8 @@ omec-control-plane:
     #   # network function
     #   AMF:
     #     debugLevel: trace
-    #     ReportCaller: false
     #   SMF:
     #     debugLevel: trace
-    #     ReportCaller: false
 
     mongodb:
       name: free5gc
@@ -70,30 +69,36 @@ omec-control-plane:
     # directly provided through Helm Charts
     amf:
       cfgFiles:
-        amfcfg.conf:
+        amfcfg.yaml:
           configuration:
             enableDBStore: true # Store AMF subscribers in the datastore
 
     # SMF config override. Refer to Helm Charts values for more options
     smf:
       cfgFiles:
-        smfcfg.conf:
+        smfcfg.yaml:
           configuration:
             enableDBStore: true  # Store SMF subscribers in the datastore
 
     #pcf:
     #  cfgFiles:
-    #    pcfcfg.conf:
+    #    pcfcfg.yaml:
     #      configuration:
 
     nrf:
       cfgFiles:
-        nrfcfg.conf:
+        nrfcfg.yaml:
           configuration:
             mongoDBStreamEnable: false    # enable/disable MongoDB stream in NRF
             nfProfileExpiryEnable: true   # If enabled, remove NF profile if no keepalive received
             nfKeepAliveTime: 60           # default timeout for NF profiles
 
+    webui:
+      cfgFiles:
+        webuicfg.yaml:
+          configuration:
+            managedByConfigPod:
+              enabled: {{ not core.standalone }}
 
 # Override values for omec-sub-provision (subscriber) Helm Chart
 # https://github.com/omec-project/sdcore-helm-charts/blob/main/omec-sub-provision/values.yaml

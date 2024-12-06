@@ -10,7 +10,7 @@
 - name: remove aether 5gc
   kubernetes.core.helm:
     name: sd-core
-    release_namespace: omec
+    release_namespace: aether-5gc
     state: absent
     wait: true
   when: inventory_hostname in groups['master_nodes']
@@ -24,23 +24,15 @@
   when: inventory_hostname in groups['master_nodes']
   ignore_errors: yes
 
-- name: remove cord chart repo
-  kubernetes.core.helm_repository:
-    name: cord
-    state: absent
-    repo_url: "https://charts.opencord.org"
-  when: inventory_hostname in groups['master_nodes']
-  ignore_errors: yes
-
 - name: waiting for aether pods to terminate
   shell: |
-    kubectl wait -n omec --for=delete --all=true -l app!=ue pod --timeout=180s
+    kubectl wait -n aether-5gc --for=delete --all=true -l app!=ue pod --timeout=180s
   when: inventory_hostname in groups['master_nodes']
   ignore_errors: yes
 
-- name: delete namespace omec
+- name: delete namespace aether-5gc
   shell: |
-    kubectl delete namespace omec
+    kubectl delete namespace aether-5gc
   when: inventory_hostname in groups['master_nodes']
   ignore_errors: yes
 
