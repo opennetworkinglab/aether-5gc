@@ -43,7 +43,7 @@ omec-control-plane:
     #     debugLevel: trace
 
     mongodb:
-      name: free5gc
+      name: aether
       url: mongodb://mongodb-arbiter-headless # Enable if cluster deployment required
       authKeysDbName: authentication
       authUrl: mongodb://mongodb-arbiter-headless
