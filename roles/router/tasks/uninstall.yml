@@ -110,7 +110,7 @@
   shell: |
     ip link del access || true
     ip link del core || true
-    iptables -t nat -D POSTROUTING -s 172.250.0.0/16 -o {{ core.data_iface }} -j MASQUERADE || true
+    iptables -t nat -D POSTROUTING -s {{ core.upf.default_upf.ue_ip_pool }} -o {{ core.data_iface }} -j MASQUERADE || true
   when: inventory_hostname in groups['master_nodes']
   become: true
   ignore_errors: yes

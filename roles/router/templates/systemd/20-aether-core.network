@@ -6,8 +6,8 @@ Name=core
 
 [Network]
 IPForward=yes
-Address=192.168.250.1/24
+Address={{ core.upf.core_subnet }}
 
 [Route]
-Gateway=192.168.250.3
-Destination=172.250.0.0/16
+Gateway={{ core.upf.default_upf.ip.core }}
+Destination={{ core.upf.default_upf.ue_ip_pool }}

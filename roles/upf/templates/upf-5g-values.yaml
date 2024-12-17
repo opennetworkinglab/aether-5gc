@@ -31,13 +31,13 @@ config:
       ipam: static
       cniPlugin: macvlan  # Can be any other plugin. Dictates how IP address are assigned
       iface: {{ core.data_iface }}
-      gateway: 192.168.252.1
+      gateway: {{ access_gw }}
       ip: {{ upf_access_ip }}
     core:
       ipam: static
       cniPlugin: macvlan  # Can be any other plugin. Dictates how IP address are assigned
       iface: {{ core.data_iface }}
-      gateway: 192.168.250.1
+      gateway: {{ core_gw }}
       ip: {{ upf_core_ip }}
     cfgFiles:
       upf.jsonc:

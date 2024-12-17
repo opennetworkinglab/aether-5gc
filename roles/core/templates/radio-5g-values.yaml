@@ -223,14 +223,14 @@ omec-user-plane:
         ipam: static
         cniPlugin: macvlan  # Can be any other plugin. Dictates how IP address are assigned
         iface: {{ core.data_iface }}
-        gateway: 192.168.252.1
-        ip: {{ core.upf.default_upf.ip.access }}
+        gateway: {{ access_gw }}
+        ip: {{ access_ip }}
       core:
         ipam: static
         cniPlugin: macvlan  # Can be any other plugin. Dictates how IP address are assigned
         iface: {{ core.data_iface }}
-        gateway: 192.168.250.1
-        ip: {{ core.upf.default_upf.ip.core }}
+        gateway: {{ core_gw }}
+        ip: {{ core_ip }}
       cfgFiles:
         upf.jsonc:
           mode: af_packet                # This mode implies no DPDK

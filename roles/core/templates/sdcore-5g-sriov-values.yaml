@@ -330,15 +330,15 @@ omec-user-plane:
         cniPlugin: vfioveth    # Can be any other plugin. Dictates how IP address are assigned
         iface: {{ core.data_iface }}
         resourceName: "intel.com/intel_sriov_vfio_access"
-        gateway: 192.168.252.1
-        ip: {{ core.upf.default_upf.ip.access }}
+        gateway: {{ access_gw }}
+        ip: {{ access_ip }}
       core:
         ipam: static
         cniPlugin: vfioveth    # Can be any other plugin. Dictates how IP address are assigned
         iface: {{ core.data_iface }}
         resourceName: "intel.com/intel_sriov_vfio_core"
-        gateway: 192.168.250.1
-        ip: {{ core.upf.default_upf.ip.core }}
+        gateway: {{ core_gw }}
+        ip: {{ core_ip }}
       cfgFiles:
         upf.jsonc:
           mode: dpdk
