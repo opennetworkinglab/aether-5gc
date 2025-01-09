@@ -70,6 +70,11 @@
   when: inventory_hostname in groups['master_nodes']
   become: true
 
+- name: Disable GRO flag on the {{ core.data_iface }} interface
+  shell: ethtool -K {{ core.data_iface }} gro off
+  when: inventory_hostname in groups['master_nodes']
+  become: true
+
 - name: find {{ core.data_iface }}'s netplan network directory
   shell: basename $(find /*/systemd/network -maxdepth 1 -not -type d -name '*{{ core.data_iface }}.network' -print)
   register: result
