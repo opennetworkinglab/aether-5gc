@@ -74,6 +74,17 @@ omec-control-plane:
         amfcfg.yaml:
           configuration:
             enableDBStore: true # Store AMF subscribers in the datastore
+            networkFeatureSupport5GS: # 5gs Network Feature Support IE, refer to TS 24.501 sec. 9.11.3.5
+              imsVoPS: 1 # IMS voice over PS session indicator (uinteger, range: 0~1)
+            # security:
+            #   integrityOrder:
+            #     - NIA3
+            #     - NIA2
+            #     - NIA0
+            #   cipheringOrder:
+            #     - NEA3
+            #     - NEA2
+            #     - NEA0
 
     # SMF config override. Refer to Helm Charts values for more options
     smf:
@@ -81,6 +92,11 @@ omec-control-plane:
         smfcfg.yaml:
           configuration:
             enableDBStore: true  # Store SMF subscribers in the datastore
+            # staticIpInfo:
+            #   - dnn: internet
+            #     imsiIpInfo:
+            #       imsi-001010123456864: "172.250.0.100"
+            #       imsi-001010123456865: "172.250.0.101"
 
     #pcf:
     #  cfgFiles:
