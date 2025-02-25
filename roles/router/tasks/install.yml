@@ -46,14 +46,14 @@
   template:
     src: roles/router/templates/systemd/10-aether-access.netdev
     dest: "{{ systemd_network_dir }}/10-aether-access.netdev"
-  when: inventory_hostname in groups['master_nodes'] and core.upf.multihop == false
+  when: inventory_hostname in groups['master_nodes'] and core.upf.non_isol_N3_nw == false
   become: true
 
 - name: copy 20-aether-access.network to {{ systemd_network_dir }}/20-aether-access.network
   template:
     src: roles/router/templates/systemd/20-aether-access.network
     dest: "{{ systemd_network_dir }}/20-aether-access.network"
-  when: inventory_hostname in groups['master_nodes'] and core.upf.multihop == false
+  when: inventory_hostname in groups['master_nodes'] and core.upf.non_isol_N3_nw == false
   become: true
 
 - name: copy 10-aether-core.netdev to {{ systemd_network_dir }}/10-aether-core.netdev
@@ -130,7 +130,7 @@
     in_interface: "{{ core.data_iface }}"
     out_interface: access
     jump: ACCEPT
-  when: inventory_hostname in groups['master_nodes'] and core.upf.multihop == false
+  when: inventory_hostname in groups['master_nodes'] and core.upf.non_isol_N3_nw == false
   become: true
 
 - name: "add iptable rule: forward from access to {{ core.data_iface }}"
@@ -139,7 +139,7 @@
     in_interface: access
     out_interface: "{{ core.data_iface }}"
     jump: ACCEPT
-  when: inventory_hostname in groups['master_nodes'] and core.upf.multihop == false
+  when: inventory_hostname in groups['master_nodes'] and core.upf.non_isol_N3_nw == false
   become: true
 
 - name: "add iptable rule: forward from {{ core.data_iface }} to core"
