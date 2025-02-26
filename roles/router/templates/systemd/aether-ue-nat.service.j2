@@ -10,15 +10,11 @@ Type=oneshot
 ExecStart=/bin/bash -c "\
     sudo iptables -t nat -C POSTROUTING -s {{ core.upf.default_upf.ue_ip_pool }} -o {{ core.data_iface }} -j MASQUERADE || \
     sudo iptables -t nat -A POSTROUTING -s {{ core.upf.default_upf.ue_ip_pool }} -o {{ core.data_iface }} -j MASQUERADE; \
-    {% if '1' in core.upf.additional_upfs %} \
-    sudo iptables -t nat -C POSTROUTING -s {{ core.upf.additional_upfs['1'].ue_ip_pool }} -o {{ core.data_iface }} -j MASQUERADE || \
-    sudo iptables -t nat -A POSTROUTING -s {{ core.upf.additional_upfs['1'].ue_ip_pool }} -o {{ core.data_iface }} -j MASQUERADE; \
-    {% endif %} \
-    {% if '2' in core.upf.additional_upfs %} \
-    sudo iptables -t nat -C POSTROUTING -s {{ core.upf.additional_upfs['2'].ue_ip_pool }} -o {{ core.data_iface }} -j MASQUERADE || \
-    sudo iptables -t nat -A POSTROUTING -s {{ core.upf.additional_upfs['2'].ue_ip_pool }} -o {{ core.data_iface }} -j MASQUERADE; \
-    {% endif %} \
+    {% for upf_key, upf_data in core.upf.additional_upfs.items() %} \
+    sudo iptables -t nat -C POSTROUTING -s {{ upf_data.ue_ip_pool }} -o {{ core.data_iface }} -j MASQUERADE || \
+    sudo iptables -t nat -A POSTROUTING -s {{ upf_data.ue_ip_pool }} -o {{ core.data_iface }} -j MASQUERADE; \
+    {% endfor %} \
 "
 
 [Install]
-WantedBy=multi-user.target
+WantedBy=sys-subsystem-net-devices-core.device

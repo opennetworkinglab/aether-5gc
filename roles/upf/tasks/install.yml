@@ -59,5 +59,3 @@
   when: inventory_hostname in groups['master_nodes']
   with_dict: "{{ core.upf.additional_upfs}}"
   become: true
-
-  # ignore_errors: yes
