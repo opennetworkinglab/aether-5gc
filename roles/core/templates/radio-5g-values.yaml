@@ -35,14 +35,13 @@ omec-control-plane:
     enabled: false
 
   config:
-    logger:
-      Util:
-        debugLevel: warn
-    #   # network function
+    # logger:
+    #   Util:
+    #     debugLevel: warn
     #   AMF:
-    #     debugLevel: trace
+    #     debugLevel: debug
     #   SMF:
-    #     debugLevel: trace
+    #     debugLevel: debug
 
     mongodb:
       name: aether
