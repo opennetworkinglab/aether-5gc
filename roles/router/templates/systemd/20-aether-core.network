@@ -8,6 +8,16 @@ Name=core
 IPForward=yes
 Address={{ core.upf.core_subnet }}
 
+# Default UPF Route
 [Route]
 Gateway={{ core.upf.default_upf.ip.core }}
 Destination={{ core.upf.default_upf.ue_ip_pool }}
+
+# Additional UPFs - Dynamically Generated Routes
+{% if core.upf.additional_upfs is defined and core.upf.additional_upfs %}
+{% for upf in core.upf.additional_upfs.values() %}
+[Route]
+Gateway={{ upf.ip.core }}
+Destination={{ upf.ue_ip_pool }}
+{% endfor %}
+{% endif %}
