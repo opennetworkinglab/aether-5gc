@@ -163,7 +163,7 @@ omec-sub-provision:
 
             # Configure Device Groups (ignored if provision-network-slice is disabled)
             device-groups:
-            - name:  "5g-gnbsim-user-group1"
+            - name:  "gnbsim-user-group1"
               imsis:
                 - "208930100007487"
                 - "208930100007488"
@@ -292,7 +292,7 @@ omec-sub-provision:
                 sd: "010203"
                 sst: 1
               site-device-group:
-              - "5g-gnbsim-user-group1"   # All UEs in this device-group are assigned to this slice
+              - "gnbsim-user-group1"   # All UEs in this device-group are assigned to this slice
               # Applicaiton filters control what each user can access.
               # Default, allow access to all applications
               application-filtering-rules:
