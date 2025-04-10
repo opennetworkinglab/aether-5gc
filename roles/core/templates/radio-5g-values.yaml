@@ -64,6 +64,12 @@ omec-control-plane:
 
     metricfunc:
       deploy: true
+      cfgFiles:
+        metricscfg.yaml:
+          configuration:
+            controllerFlag: {{ core.closed_loop | default('false') }}
+            userAppApiServer:
+              addr: "upf"
 
     # Change AMF config here if rquired
     # Most of the AMF config comes from Slice APIs but some of the config is
@@ -245,6 +251,7 @@ omec-user-plane:
         iface: {{ core.data_iface }}
         gateway: {{ core_gw }}
         ip: {{ core_ip }}
+      closedLoop: {{ core.closed_loop | default('false') }}
       cfgFiles:
         upf.jsonc:
           mode: {{ core.upf.mode }}
