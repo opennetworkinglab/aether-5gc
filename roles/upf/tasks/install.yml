@@ -54,8 +54,8 @@
 
 - name: configure route for upf traffic on gnbsim node
   shell: |
+    ip route show | grep -q "{{ item.value.ue_ip_pool }} via {{ item.value.ip.core }}" || \
     ip route add {{ item.value.ue_ip_pool }} via {{ item.value.ip.core }}
   when: inventory_hostname in groups['master_nodes']
   with_dict: "{{ core.upf.additional_upfs}}"
   become: true
-  # ignore_errors: yes
