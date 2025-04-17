@@ -65,10 +65,16 @@
   become: true
   ignore_errors: yes
 
-- name: delete {{ systemd_network_dir }}/{{ result.stdout }}.d
+- name: delete {{ systemd_network_dir }}/{{ result.stdout }}.d/macvlan.conf
   file:
-    path: "{{ systemd_network_dir }}/{{ result.stdout }}.d"
+    path: "{{ systemd_network_dir }}/{{ result.stdout }}.d/macvlan.conf"
     state: absent
+  when: inventory_hostname in groups['master_nodes']
+  become: true
+  ignore_errors: yes
+
+- name: delete {{ systemd_network_dir }}/{{ result.stdout }}.d if empty
+  shell: rmdir {{ systemd_network_dir }}/{{ result.stdout }}.d
   when: inventory_hostname in groups['master_nodes']
   become: true
   ignore_errors: yes
