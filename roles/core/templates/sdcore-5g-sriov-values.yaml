@@ -51,7 +51,6 @@ omec-control-plane:
 
     managedByConfigPod:
       enabled: true
-      syncUrl: http://roc-sdcore-adapter-v2-1.aether-roc.svc:8080/synchronize
 
     sctplb:
       deploy: true # If enabled then deploy sctp pod
@@ -125,6 +124,7 @@ omec-control-plane:
           configuration:
             managedByConfigPod:
               enabled: {{ not core.standalone }}
+              syncUrl: http://roc-sdcore-adapter-v2-1.aether-roc.svc:8080/synchronize
 
 # Override values for omec-sub-provision (subscriber) Helm Chart
 # https://github.com/omec-project/sdcore-helm-charts/blob/main/omec-sub-provision/values.yaml
