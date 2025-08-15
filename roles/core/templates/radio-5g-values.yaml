@@ -198,6 +198,9 @@ omec-sub-provision:
                 priority: 250
                 action: "permit"
                 endpoint: "0.0.0.0/0"
+                traffic-class:
+                  qci: 9
+                  arp: 6
               site-info:
                 # Provide gNBs and UPF details and also PLMN for the site
                 gNodeBs:
