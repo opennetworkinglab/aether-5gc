@@ -55,7 +55,7 @@ omec-control-plane:
       enabled: true
 
     sctplb:
-      deploy: true # If enabled then deploy sctp pod
+      deploy: false # If enabled then deploy sctp pod
       ngapp:
         externalIp: {{ core.amf.ip }}
         port: 38412
@@ -76,6 +76,8 @@ omec-control-plane:
     # Most of the AMF config comes from Slice APIs but some of the config is
     # directly provided through Helm Charts
     amf:
+      ngapp:
+        externalIp: {{ core.amf.ip }}
       cfgFiles:
         amfcfg.yaml:
           configuration:
