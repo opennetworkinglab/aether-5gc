@@ -258,7 +258,7 @@ omec-user-plane:
         iface: {{ core.data_iface }}
         gateway: {{ core_gw }}
         ip: {{ core_ip }}
-      closedLoop: {{ core.closed_loop | default('false') }}
+      closedLoop: {{ core.closed_loop | default('false') | lower }}
       cfgFiles:
         upf.jsonc:
           mode: {{ core.upf.mode }}

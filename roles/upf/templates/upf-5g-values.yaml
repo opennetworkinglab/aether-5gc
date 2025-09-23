@@ -39,7 +39,7 @@ config:
       iface: {{ core.data_iface }}
       gateway: {{ core_gw }}
       ip: {{ upf_core_ip }}
-    closedLoop: {{ core.closed_loop | default('false') }}
+    closedLoop: {{ core.closed_loop | default('false') | lower }}
     cfgFiles:
       upf.jsonc:
         mode: af_packet     # This mode implies no DPDK
