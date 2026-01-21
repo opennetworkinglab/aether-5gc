@@ -21,6 +21,20 @@ omec-control-plane:
     #  amf: <amf image tag>
     # refer to above Helm Chart to add other NF images
 
+ # Confidential Container Configuration
+  confidentialContainers:
+    enabled: {{ core.confidential_containers.enabled | default('false') }}
+    runtimeClassName: {{ core.confidential_containers.runtime_class | default('kata-qemu') }}
+    annotation:
+      enabled: {{ core.confidential_containers.annotation.enabled | default('false') }}
+      kernelParams: {{ core.confidential_containers.annotation.kernel_params | default('') | quote }}
+    attestation:
+      enabled: {{ core.confidential_containers.attestation.enabled | default('false') }}
+      required: {{ core.confidential_containers.attestation.required | default('false') }}
+      kbsAddress: {{ core.confidential_containers.attestation.kbs_address | default('') | quote }}
+      attestationUrl: {{ core.confidential_containers.attestation.url | default('http://127.0.0.1:8006/aa/token?token_type=kbs') | quote }}
+      timeout: {{ core.confidential_containers.attestation.timeout | default(300) }}
+
   kafka:
     deploy: true
 
