@@ -25,7 +25,7 @@ omec-control-plane:
 
   kafka:
     deploy: true
-    # Enable nodeSelector if need to control where to deploy the kafka instance(s)
+    # Enable nodeSelector if needed to control where to deploy the kafka instance(s)
     # controller:
     #   nodeSelector:
     #     node-role.aetherproject.org/5gc: "true"
@@ -36,7 +36,7 @@ omec-control-plane:
       enabled: false
     architecture: replicaset
     replicaCount: 2
-    # Enable nodeSelector if need to control where to deploy the mongodb instances
+    # Enable nodeSelector if needed to control where to deploy the mongodb instances
     # nodeSelector:
     #   node-role.aetherproject.org/5gc: "true"
     # arbiter:
