@@ -15,6 +15,8 @@ omec-control-plane:
 # https://github.com/omec-project/sdcore-helm-charts/blob/main/5g-control-plane/values.yaml
 5g-control-plane:
   enable5G: true
+  nodeSelectors:
+    enabled: false
   images:
     repository: "registry.aetherproject.org/proxy/"
     #tags:
@@ -23,6 +25,10 @@ omec-control-plane:
 
   kafka:
     deploy: true
+    # Enable nodeSelector if needed to control where to deploy the kafka instance(s)
+    # controller:
+    #   nodeSelector:
+    #     node-role.aetherproject.org/5gc: "true"
 
   mongodb:
     usePassword: false
@@ -30,6 +36,12 @@ omec-control-plane:
       enabled: false
     architecture: replicaset
     replicaCount: 2
+    # Enable nodeSelector if needed to control where to deploy the mongodb instances
+    # nodeSelector:
+    #   node-role.aetherproject.org/5gc: "true"
+    # arbiter:
+    #   nodeSelector:
+    #     node-role.aetherproject.org/5gc: "true"
 
   resources:
     enabled: false
@@ -130,6 +142,8 @@ omec-control-plane:
 # ***Note: Most of these values can (and should) be set via ROC API***
 omec-sub-provision:
   enable: true
+  nodeSelectors:
+    enabled: false
   images:
     repository: "registry.aetherproject.org/proxy/"
     #tags:
