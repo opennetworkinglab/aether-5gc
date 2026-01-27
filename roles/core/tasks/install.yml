@@ -82,7 +82,7 @@
         release_namespace: aether-5gc
         create_namespace: true
         chart_ref: "{{ core.helm.chart_ref if core.helm.local_charts == false else chart_ref_sd_core }}"
-        chart_version: "{{ core.helm.chart_version }}"
+        chart_version: "{{ core.helm.chart_version if core.helm.local_charts == false else omit }}"
         values_files:
           - /tmp/sdcore-5g-values.yaml
         wait: true
