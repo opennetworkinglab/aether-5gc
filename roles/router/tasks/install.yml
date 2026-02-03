@@ -160,7 +160,7 @@
   when: inventory_hostname in groups['master_nodes']
   become: true
 
-- name: force systemd to reread configs for iptables service
+- name: force systemd to reread configs for 5gc-iptables service
   systemd:
     daemon_reload: true
   when: inventory_hostname in groups['master_nodes']
