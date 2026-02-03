@@ -6,6 +6,38 @@
     systemd_network_dir: /etc/systemd/network
     systemd_system_dir: /etc/systemd/system
 
+- name: stop 5gc-iptables.service
+  systemd:
+    name: 5gc-iptables.service
+    state: stopped
+  when: inventory_hostname in groups['master_nodes']
+  become: true
+  ignore_errors: yes
+
+- name: disable 5gc-iptables.service
+  systemd:
+    name: 5gc-iptables.service
+    enabled: false
+  when: inventory_hostname in groups['master_nodes']
+  become: true
+  ignore_errors: yes
+
+- name: delete {{ systemd_system_dir }}/5gc-iptables.service
+  file:
+    path: "{{ systemd_system_dir }}/5gc-iptables.service"
+    state: absent
+  when: inventory_hostname in groups['master_nodes']
+  become: true
+  ignore_errors: yes
+
+- name: delete persistent 5gc iptables rules file
+  file:
+    path: /etc/iptables/5gc-rules.v4
+    state: absent
+  when: inventory_hostname in groups['master_nodes']
+  become: true
+  ignore_errors: yes
+
 - name: "delete iptable rule: forward from {{ core.data_iface }} to access"
   iptables:
     chain: FORWARD
