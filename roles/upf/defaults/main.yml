@@ -1,6 +1,6 @@
 core:
   data_iface: ens18
-  ran_subnet: "172.20.0.0/16"	# set to empty string to get subnet from 'data_iface'
+  ran_subnet: "172.20.0.0/16"  # set to empty string to get subnet from 'data_iface'
 
   upf:
     helm:
