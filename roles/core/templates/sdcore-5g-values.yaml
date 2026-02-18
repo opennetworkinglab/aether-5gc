@@ -17,11 +17,11 @@ omec-control-plane:
   enable5G: true
   nodeSelectors:
     enabled: false
-  images:
-    repository: "registry.aetherproject.org/proxy/"
-    #tags:
-    #  amf: <amf image tag>
-    # refer to above Helm Chart to add other NF images
+  # refer to above Helm Chart to add other NF images
+  # images:
+  #   repository: ""
+  #   tags:
+  #     amf: <amf image tag>
 
   kafka:
     deploy: true
@@ -147,10 +147,10 @@ omec-sub-provision:
   enable: true
   nodeSelectors:
     enabled: false
-  images:
-    repository: "registry.aetherproject.org/proxy/"
-    #tags:
-    #  simapp: #add simapp override image
+  # images:
+  #   repository: ""
+  #   tags:
+  #     simapp: #add simapp override image
 
   config:
     simapp:
@@ -348,15 +348,15 @@ omec-user-plane:
     enabled: true
   resources:
     enabled: false
-  images:
-    repository: "registry.aetherproject.org/proxy/"
-    # tags:
-      # bess: <bess image tag>
-      # pfcpiface: <pfcp image tag>
-      # tools: omecproject/busybox:stable
+  # images:
+  #   repository: ""
+  #   tags:
+  #     bess: <bess image tag>
+  #     pfcpiface: <pfcp image tag>
+  #     tools: <aether-pod-init image tag>
   config:
     upf:
-      name: "oaisim"
+      name: "aether-upf"
       sriov:
         enabled: false    # SRIOV is disabled by default
       hugepage:
