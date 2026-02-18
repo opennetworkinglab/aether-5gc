@@ -8,16 +8,15 @@
 enable: true
 resources:
   enabled: false
-images:
-  repository: ""    # defaults to Docker Hub
-  # following two lines pull busybox from Docker Hub instead of Aether Registry
-  tags:
-    tools: omecproject/busybox:stable
-  #  bess: <bess image tag>
-  #  pfcpiface: <pfcp image tag>
+# images:
+#   repository: ""
+#   tags:
+#     bess: <bess image tag>
+#     pfcpiface: <pfcp image tag>
+#     tools: <aether-pod-init image tag>
 config:
   upf:
-    name: "oaisim"
+    name: "aether-upf"
     sriov:
       enabled: false    # SRIOV is disabled by default
     hugepage:
@@ -52,7 +51,7 @@ config:
           dnn: "internet"              # Must match Slice dnn
           hostname: "upf"
           #http_port: "8080"
-          enable_ue_ip_alloc: false    # If true, UPF allocates address from following pool
+          enable_ue_ip_alloc: true    # If true, UPF allocates address from following pool
           ue_ip_pool: {{ upf_ue_ip_pool }} # IP pool used UEs if enable_ue_ip_alloc=true
         slice_rate_limit_config:       # Slice-level rate limiting (also controlled by ROC)
           # Uplink
