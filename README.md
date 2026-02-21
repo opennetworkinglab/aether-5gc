@@ -36,3 +36,80 @@ To install the 5g-core, follow these steps:
 To install 5gc in one go, run `make 5gc-install`.
 #### Uninstall
    - run `make 5gc-uninstall`
+
+### Confidential Containers Configuration (Optional)
+
+To deploy 5G core network functions in confidential containers, add the following configuration to your `vars/main.yaml` file under the `core` section:
+
+```yaml
+core:
+  # ... existing configuration ...
+
+  # Confidential Container Configuration
+  confidential_containers:
+    enabled: false                   # Set to true to enable confidential containers
+    runtime_class: "kata-qemu"       # Runtime class (default: kata-qemu)
+    annotation:
+      enabled: false                 # Enable Kata-specific annotations
+      kernel_params: ""              # Custom kernel parameters (leave empty for defaults)
+    attestation:
+      enabled: false                 # Enable attestation verification
+      required: false                # If true, pods fail when attestation fails
+      kbs_address: ""                # Key Broker Service address (e.g., "http://kbs-service:8080")
+      url: "http://127.0.0.1:8006/aa/token?token_type=kbs"  # Attestation endpoint
+      timeout: 300                   # Attestation timeout in seconds
+```
+#### Confidential Container Prerequisites
+
+Before enabling confidential containers, ensure:
+
+- Kata Containers is installed on all Kubernetes nodes
+- Runtime Class is configured in your cluster:
+
+```bash
+kubectl get runtimeclass
+```
+
+- KBS (Key Broker Service) is deployed if using attestation
+- Hardware support for TDX confidential computing
+
+#### Configuration Examples
+
+Basic Confidential Containers (no attestation):
+
+```yaml
+confidential_containers:
+  enabled: true
+  runtime_class: "kata-qemu"
+  annotation:
+    enabled: false
+  attestation:
+    enabled: false
+```
+
+Full Confidential Containers with Attestation:
+
+```yaml
+confidential_containers:
+  enabled: true
+  runtime_class: "kata-qemu"
+  annotation:
+    enabled: true
+    kernel_params: ""  # Uses default KBS parameters
+  attestation:
+    enabled: true
+    required: true
+    kbs_address: "http://kbs-service.kbs-system:8080"
+```
+
+#### Verification
+
+After deployment, verify confidential containers are working:
+
+```bash
+# Check runtime class assignment
+kubectl get pods -n aether-5gc -o custom-columns=NAME:.metadata.name,RUNTIME:.spec.runtimeClassName
+
+# Check pod annotations
+kubectl get pod -n aether-5gc <pod-name> -o jsonpath='{.metadata.annotations}' | jq .
+```
