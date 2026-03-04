@@ -16,14 +16,6 @@
   when: inventory_hostname in groups['master_nodes']
   ignore_errors: yes
 
-- name: remove aether chart repo
-  kubernetes.core.helm_repository:
-    name: aether
-    state: absent
-    repo_url: "https://charts.aetherproject.org"
-  when: inventory_hostname in groups['master_nodes']
-  ignore_errors: yes
-
 - name: waiting for aether pods to terminate
   shell: |
     kubectl wait -n aether-5gc --for=delete --all=true -l app!=ue pod --timeout=180s
