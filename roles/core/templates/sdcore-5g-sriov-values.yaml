@@ -287,22 +287,123 @@ omec-sub-provision:
                 - "208930100007584"
                 - "208930100007585"
                 - "208930100007586"
+              msisdns:
+                - "msisdn-9000000001"
+                - "msisdn-9000000002"
+                - "msisdn-9000000003"
+                - "msisdn-9000000004"
+                - "msisdn-9000000005"
+                - "msisdn-9000000006"
+                - "msisdn-9000000007"
+                - "msisdn-9000000008"
+                - "msisdn-9000000009"
+                - "msisdn-9000000010"
+                - "msisdn-9000000011"
+                - "msisdn-9000000012"
+                - "msisdn-9000000013"
+                - "msisdn-9000000014"
+                - "msisdn-9000000015"
+                - "msisdn-9000000016"
+                - "msisdn-9000000017"
+                - "msisdn-9000000018"
+                - "msisdn-9000000019"
+                - "msisdn-9000000020"
+                - "msisdn-9000000021"
+                - "msisdn-9000000022"
+                - "msisdn-9000000023"
+                - "msisdn-9000000024"
+                - "msisdn-9000000025"
+                - "msisdn-9000000026"
+                - "msisdn-9000000027"
+                - "msisdn-9000000028"
+                - "msisdn-9000000029"
+                - "msisdn-9000000030"
+                - "msisdn-9000000031"
+                - "msisdn-9000000032"
+                - "msisdn-9000000033"
+                - "msisdn-9000000034"
+                - "msisdn-9000000035"
+                - "msisdn-9000000036"
+                - "msisdn-9000000037"
+                - "msisdn-9000000038"
+                - "msisdn-9000000039"
+                - "msisdn-9000000040"
+                - "msisdn-9000000041"
+                - "msisdn-9000000042"
+                - "msisdn-9000000043"
+                - "msisdn-9000000044"
+                - "msisdn-9000000045"
+                - "msisdn-9000000046"
+                - "msisdn-9000000047"
+                - "msisdn-9000000048"
+                - "msisdn-9000000049"
+                - "msisdn-9000000050"
+                - "msisdn-9000000051"
+                - "msisdn-9000000052"
+                - "msisdn-9000000053"
+                - "msisdn-9000000054"
+                - "msisdn-9000000055"
+                - "msisdn-9000000056"
+                - "msisdn-9000000057"
+                - "msisdn-9000000058"
+                - "msisdn-9000000059"
+                - "msisdn-9000000060"
+                - "msisdn-9000000061"
+                - "msisdn-9000000062"
+                - "msisdn-9000000063"
+                - "msisdn-9000000064"
+                - "msisdn-9000000065"
+                - "msisdn-9000000066"
+                - "msisdn-9000000067"
+                - "msisdn-9000000068"
+                - "msisdn-9000000069"
+                - "msisdn-9000000070"
+                - "msisdn-9000000071"
+                - "msisdn-9000000072"
+                - "msisdn-9000000073"
+                - "msisdn-9000000074"
+                - "msisdn-9000000075"
+                - "msisdn-9000000076"
+                - "msisdn-9000000077"
+                - "msisdn-9000000078"
+                - "msisdn-9000000079"
+                - "msisdn-9000000080"
+                - "msisdn-9000000081"
+                - "msisdn-9000000082"
+                - "msisdn-9000000083"
+                - "msisdn-9000000084"
+                - "msisdn-9000000085"
+                - "msisdn-9000000086"
+                - "msisdn-9000000087"
+                - "msisdn-9000000088"
+                - "msisdn-9000000089"
+                - "msisdn-9000000090"
+                - "msisdn-9000000091"
+                - "msisdn-9000000092"
+                - "msisdn-9000000093"
+                - "msisdn-9000000094"
+                - "msisdn-9000000095"
+                - "msisdn-9000000096"
+                - "msisdn-9000000097"
+                - "msisdn-9000000098"
+                - "msisdn-9000000099"
+                - "msisdn-9000000100"
               ip-domain-name: "pool1"
-              ip-domain-expanded:
-                dnn: internet
-                dns-primary: "8.8.8.8"        # Value is sent to UE
-                mtu: 1460                     # Value is sent to UE when PDU Session Established
-                ue-ip-pool: {{ core.upf.default_upf.ue_ip_pool }}  # IP address pool for subscribers
-                ue-dnn-qos:
-                  dnn-mbr-downlink: 1000      # UE level downlink QoS (Maximum bit rate per UE)
-                  dnn-mbr-uplink:   1000      # UE level uplink QoS (Maximum bit rate per UE)
-                  bitrate-unit: Mbps          # Unit for above QoS rates
-                  traffic-class:              # Default bearer QCI/ARP (not used in 5G)
-                    name: "platinum"
-                    qci: 9
-                    arp: 6
-                    pdb: 300
-                    pelr: 6
+              ip-domains:
+                - dnn: internet
+                  dns-primary: "8.8.8.8"        # Value is sent to UE
+                  mtu: 1460                     # Value is sent to UE when PDU Session Established
+                  ue-ip-pool: {{ core.upf.default_upf.ue_ip_pool }}  # IP address pool for subscribers
+                  ue-dnn-qos:
+                    dnn-mbr-downlink: 1000      # UE level downlink QoS (Maximum bit rate per UE)
+                    dnn-mbr-uplink:   1000      # UE level uplink QoS (Maximum bit rate per UE)
+                    bitrate-unit: Mbps          # Unit for above QoS rates
+                    traffic-class:              # Default bearer QCI/ARP (not used in 5G)
+                      name: "platinum"
+                      qci: 9
+                      arp: 6
+                      pdb: 300
+                      pelr: 6
               site-info: "enterprise"
             # UPF allocates IP address if there is only 1 device-group
             # SMF allocates IP address if there is >1 device-group
