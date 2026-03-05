@@ -179,22 +179,25 @@ omec-sub-provision:
               imsis:
                 - "001010123456864"
                 - "001010123456865"
+              msisdns:
+                - "msisdn-9000000001"
+                - "msisdn-9000000002"
               ip-domain-name: "pool1"
-              ip-domain-expanded:
-                dnn: internet
-                dns-primary: "8.8.8.8"        # Value is sent to UE
-                mtu: 1460                     # Value is sent to UE when PDU Session Established
-                ue-ip-pool: {{ core.upf.default_upf.ue_ip_pool }}  # IP address pool for subscribers
-                ue-dnn-qos:
-                  dnn-mbr-downlink: 1000      # UE level downlink QoS (Maximum bit rate per UE)
-                  dnn-mbr-uplink:   1000      # UE level uplink QoS (Maximum bit rate per UE)
-                  bitrate-unit: Mbps          # Unit for above QoS rates
-                  traffic-class:              # Default bearer QCI/ARP (not used in 5G)
-                    name: "platinum"
-                    qci: 9
-                    arp: 6
-                    pdb: 300
-                    pelr: 6
+              ip-domains:
+                - dnn: internet
+                  dns-primary: "8.8.8.8"        # Value is sent to UE
+                  mtu: 1460                     # Value is sent to UE when PDU Session Established
+                  ue-ip-pool: {{ core.upf.default_upf.ue_ip_pool }}  # IP address pool for subscribers
+                  ue-dnn-qos:
+                    dnn-mbr-downlink: 1000      # UE level downlink QoS (Maximum bit rate per UE)
+                    dnn-mbr-uplink:   1000      # UE level uplink QoS (Maximum bit rate per UE)
+                    bitrate-unit: Mbps          # Unit for above QoS rates
+                    traffic-class:              # Default bearer QCI/ARP (not used in 5G)
+                      name: "platinum"
+                      qci: 9
+                      arp: 6
+                      pdb: 300
+                      pelr: 6
               site-info: "enterprise"
             # UPF allocates IP address if there is only 1 device-group
             # SMF allocates IP address if there is >1 device-group
