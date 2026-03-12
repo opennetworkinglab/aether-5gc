@@ -1,9 +1,9 @@
-# SPDX-FileCopyrightText: 2026 Intel Corporation
+# Copyright (C) 2026 Intel Corporation
 # SPDX-License-Identifier: Apache-2.0
 
 [Unit]
 Description=5GC iptables rules
-After=systemd-networkd.service
+After=systemd-networkd.service aether-5gc-macvlan.service
 Wants=sys-subsystem-net-devices-core.device
 
 [Service]

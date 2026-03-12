@@ -75,23 +75,76 @@
   when: inventory_hostname in groups['master_nodes']
   become: true
 
-- name: find {{ core.data_iface }}'s netplan network directory
-  shell: basename $(find /*/systemd/network -maxdepth 1 -not -type d -name '*{{ core.data_iface }}.network' -print)
-  register: result
+- name: find {{ core.data_iface }}'s systemd-networkd file by filename
+  shell: |
+    find /etc/systemd/network /run/systemd/network /lib/systemd/network /usr/lib/systemd/network \
+      -maxdepth 1 -type f -name '*{{ core.data_iface }}.network' -print 2>/dev/null \
+      | head -n 1 \
+      | xargs -r basename
+  register: data_iface_network_file_cmd
+  changed_when: false
+  failed_when: false
   when: inventory_hostname in groups['master_nodes']
   become: true
 
-- name: create {{ systemd_network_dir }}/{{ result.stdout }}.d
+- name: find {{ core.data_iface }}'s active systemd-networkd file via networkctl
+  shell: |
+    networkctl status {{ core.data_iface }} 2>/dev/null \
+      | awk -F': ' '/Network File:/ && $2 ~ /\.network$/ {print $2; exit}' \
+      | xargs -r basename
+  register: data_iface_network_file_networkctl
+  changed_when: false
+  failed_when: false
+  when:
+    - inventory_hostname in groups['master_nodes']
+    - (data_iface_network_file_cmd.stdout | trim) == ''
+  become: true
+
+- name: set {{ core.data_iface }}'s systemd-networkd filename
+  set_fact:
+    data_iface_network_filename: >-
+      {{
+        (data_iface_network_file_cmd.stdout | trim)
+        if (data_iface_network_file_cmd.stdout | trim) != ''
+        else (data_iface_network_file_networkctl.stdout | default('') | trim)
+      }}
+  when: inventory_hostname in groups['master_nodes']
+
+- name: set whether {{ core.data_iface }} is managed by systemd-networkd
+  set_fact:
+    data_iface_networkd_managed: "{{ (data_iface_network_filename | default('') | trim) is match('.*\\.network$') }}"
+  when: inventory_hostname in groups['master_nodes']
+
+- name: note direct macvlan fallback for {{ core.data_iface }}
+  debug:
+    msg: >-
+      {{ core.data_iface }} is not managed by systemd-networkd. Falling back to direct macvlan interface setup.
+  when:
+    - inventory_hostname in groups['master_nodes']
+    - not data_iface_networkd_managed
+
+- name: create {{ systemd_network_dir }}/{{ data_iface_network_filename }}.d
   file:
-    path: "{{ systemd_network_dir }}/{{ result.stdout }}.d"
+    path: "{{ systemd_network_dir }}/{{ data_iface_network_filename }}.d"
     state: directory
-  when: inventory_hostname in groups['master_nodes']
+  when:
+    - inventory_hostname in groups['master_nodes']
+    - data_iface_networkd_managed
   become: true
 
-- name: copy macvlan.conf to {{ systemd_network_dir }}/{{ result.stdout }}.d/macvlan.conf
+- name: copy macvlan.conf to {{ systemd_network_dir }}/{{ data_iface_network_filename }}.d/macvlan.conf
   template:
     src: roles/router/templates/macvlan.conf
-    dest: "{{ systemd_network_dir }}/{{ result.stdout }}.d/macvlan.conf"
+    dest: "{{ systemd_network_dir }}/{{ data_iface_network_filename }}.d/macvlan.conf"
+  when:
+    - inventory_hostname in groups['master_nodes']
+    - data_iface_networkd_managed
+  become: true
+
+- name: copy aether-5gc-macvlan.service to {{ systemd_system_dir }}/aether-5gc-macvlan.service
+  template:
+    src: roles/router/templates/aether-5gc-macvlan.service
+    dest: "{{ systemd_system_dir }}/aether-5gc-macvlan.service"
   when: inventory_hostname in groups['master_nodes']
   become: true
 
@@ -106,6 +159,26 @@
   systemd:
     daemon_reload: true
   when: inventory_hostname in groups['master_nodes']
+  become: true
+
+- name: disable aether-5gc-macvlan.service when systemd-networkd manages {{ core.data_iface }}
+  systemd:
+    name: aether-5gc-macvlan.service
+    enabled: false
+    state: stopped
+  when:
+    - inventory_hostname in groups['master_nodes']
+    - data_iface_networkd_managed
+  become: true
+
+- name: enable aether-5gc-macvlan.service for direct macvlan fallback
+  systemd:
+    name: aether-5gc-macvlan.service
+    enabled: true
+    state: started
+  when:
+    - inventory_hostname in groups['master_nodes']
+    - not data_iface_networkd_managed
   become: true
 
 - name: enable aether-ue-nat.service
@@ -126,7 +199,9 @@
   systemd:
     name: systemd-networkd
     state: restarted
-  when: inventory_hostname in groups['master_nodes']
+  when:
+    - inventory_hostname in groups['master_nodes']
+    - data_iface_networkd_managed
   become: true
 
 - name: install iptables-persistent package
