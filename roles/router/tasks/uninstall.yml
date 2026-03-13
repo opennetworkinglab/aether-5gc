@@ -82,6 +82,22 @@
   become: true
   ignore_errors: yes
 
+- name: stop aether-ue-nat.service
+  systemd:
+    name: aether-ue-nat.service
+    state: stopped
+  when: inventory_hostname in groups['master_nodes']
+  become: true
+  ignore_errors: yes
+
+- name: disable aether-ue-nat.service
+  systemd:
+    name: aether-ue-nat.service
+    enabled: false
+  when: inventory_hostname in groups['master_nodes']
+  become: true
+  ignore_errors: yes
+
 - name: delete {{ systemd_system_dir }}/aether-ue-nat.service
   file:
     path: "{{ systemd_system_dir }}/aether-ue-nat.service"
@@ -114,17 +130,19 @@
   become: true
   ignore_errors: yes
 
-- name: find {{ core.data_iface }}'s systemd-networkd file by filename
-  shell: |
-    find /etc/systemd/network /run/systemd/network /lib/systemd/network /usr/lib/systemd/network \
-      -maxdepth 1 -type f -name '*{{ core.data_iface }}.network' -print 2>/dev/null \
-      | head -n 1 \
-      | xargs -r basename
-  register: data_iface_network_file_cmd
+- name: check if systemd-networkd is active
+  shell: systemctl is-active systemd-networkd 2>/dev/null || true
+  register: systemd_networkd_state
   changed_when: false
   failed_when: false
   when: inventory_hostname in groups['master_nodes']
   become: true
+  ignore_errors: yes
+
+- name: set whether systemd-networkd is active
+  set_fact:
+    systemd_networkd_active: "{{ (systemd_networkd_state.stdout | default('') | trim) == 'active' }}"
+  when: inventory_hostname in groups['master_nodes']
   ignore_errors: yes
 
 - name: find {{ core.data_iface }}'s active systemd-networkd file via networkctl
@@ -137,7 +155,24 @@
   failed_when: false
   when:
     - inventory_hostname in groups['master_nodes']
-    - (data_iface_network_file_cmd.stdout | trim) == ''
+    - systemd_networkd_active
+  become: true
+  ignore_errors: yes
+
+- name: find {{ core.data_iface }}'s systemd-networkd file by filename
+  shell: |
+    find /etc/systemd/network /run/systemd/network /lib/systemd/network /usr/lib/systemd/network \
+      -maxdepth 1 -type f -name '*{{ core.data_iface }}.network' -print 2>/dev/null \
+      | sort \
+      | head -n 1 \
+      | xargs -r basename
+  register: data_iface_network_file_cmd
+  changed_when: false
+  failed_when: false
+  when:
+    - inventory_hostname in groups['master_nodes']
+    - systemd_networkd_active
+    - (data_iface_network_file_networkctl.stdout | default('') | trim) == ''
   become: true
   ignore_errors: yes
 
@@ -145,9 +180,9 @@
   set_fact:
     data_iface_network_filename: >-
       {{
-        (data_iface_network_file_cmd.stdout | trim)
-        if (data_iface_network_file_cmd.stdout | trim) != ''
-        else (data_iface_network_file_networkctl.stdout | default('') | trim)
+        (data_iface_network_file_networkctl.stdout | default('') | trim)
+        if (data_iface_network_file_networkctl.stdout | default('') | trim) != ''
+        else (data_iface_network_file_cmd.stdout | default('') | trim)
       }}
   when: inventory_hostname in groups['master_nodes']
   ignore_errors: yes
@@ -259,33 +294,22 @@
   become: true
   ignore_errors: yes
 
-# - name: stop aether-ue-nat.service
-#   systemd:
-#     name: aether-ue-nat.service
-#     state: stopped
-#   when: inventory_hostname in groups['master_nodes']
-#   become: true
-#   ignore_errors: yes
+- name: set net.ipv4.conf.{{ core.data_iface }}.forwarding to 0
+  ansible.posix.sysctl:
+    name: net.ipv4.conf.{{ core.data_iface }}.forwarding
+    value: '0'
+    sysctl_set: true
+    reload: true
+  when: inventory_hostname in groups['master_nodes']
+  become: true
+  ignore_errors: yes
 
-# - name: disbale aether-ue-nat.service
-#   systemd:
-#     name: aether-ue-nat.service
-#     enabled: false
-#   when: inventory_hostname in groups['master_nodes']
-#   become: true
-#   ignore_errors: yes
-
-# - name: force systemd to reread configs
-#   systemd:
-#     daemon_reload: true
-#   when: inventory_hostname in groups['master_nodes']
-#   become: true
-#   ignore_errors: yes
-
-# - name: restart systemd-networkd
-#   systemd:
-#     name: systemd-networkd
-#     state: restarted
-#   when: inventory_hostname in groups['master_nodes']
-#   become: true
-#   ignore_errors: yes
+- name: set net.ipv4.ip_forward to 0
+  ansible.posix.sysctl:
+    name: net.ipv4.ip_forward
+    value: '0'
+    sysctl_set: true
+    reload: true
+  when: inventory_hostname in groups['master_nodes']
+  become: true
+  ignore_errors: yes

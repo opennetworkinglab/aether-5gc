@@ -3,6 +3,7 @@
 
 [Unit]
 After=network-online.target aether-5gc-macvlan.service
+Wants=network-online.target
 
 [Service]
 Type=oneshot

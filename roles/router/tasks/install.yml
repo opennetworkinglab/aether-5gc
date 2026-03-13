@@ -42,6 +42,24 @@
   when: inventory_hostname in groups['master_nodes']
   become: true
 
+- name: set net.ipv4.ip_forward to 1
+  ansible.posix.sysctl:
+    name: net.ipv4.ip_forward
+    value: '1'
+    sysctl_set: true
+    reload: true
+  when: inventory_hostname in groups['master_nodes']
+  become: true
+
+- name: set net.ipv4.conf.{{ core.data_iface }}.forwarding to 1
+  ansible.posix.sysctl:
+    name: net.ipv4.conf.{{ core.data_iface }}.forwarding
+    value: '1'
+    sysctl_set: true
+    reload: true
+  when: inventory_hostname in groups['master_nodes']
+  become: true
+
 - name: copy 10-aether-access.netdev to {{ systemd_network_dir }}/10-aether-access.netdev
   template:
     src: roles/router/templates/10-aether-access.netdev
@@ -75,17 +93,18 @@
   when: inventory_hostname in groups['master_nodes']
   become: true
 
-- name: find {{ core.data_iface }}'s systemd-networkd file by filename
-  shell: |
-    find /etc/systemd/network /run/systemd/network /lib/systemd/network /usr/lib/systemd/network \
-      -maxdepth 1 -type f -name '*{{ core.data_iface }}.network' -print 2>/dev/null \
-      | head -n 1 \
-      | xargs -r basename
-  register: data_iface_network_file_cmd
+- name: check if systemd-networkd is active
+  shell: systemctl is-active systemd-networkd 2>/dev/null || true
+  register: systemd_networkd_state
   changed_when: false
   failed_when: false
   when: inventory_hostname in groups['master_nodes']
   become: true
+
+- name: set whether systemd-networkd is active
+  set_fact:
+    systemd_networkd_active: "{{ (systemd_networkd_state.stdout | default('') | trim) == 'active' }}"
+  when: inventory_hostname in groups['master_nodes']
 
 - name: find {{ core.data_iface }}'s active systemd-networkd file via networkctl
   shell: |
@@ -97,22 +116,42 @@
   failed_when: false
   when:
     - inventory_hostname in groups['master_nodes']
-    - (data_iface_network_file_cmd.stdout | trim) == ''
+    - systemd_networkd_active
+  become: true
+
+- name: find {{ core.data_iface }}'s systemd-networkd file by filename
+  shell: |
+    find /etc/systemd/network /run/systemd/network /lib/systemd/network /usr/lib/systemd/network \
+      -maxdepth 1 -type f -name '*{{ core.data_iface }}.network' -print 2>/dev/null \
+      | sort \
+      | head -n 1 \
+      | xargs -r basename
+  register: data_iface_network_file_cmd
+  changed_when: false
+  failed_when: false
+  when:
+    - inventory_hostname in groups['master_nodes']
+    - systemd_networkd_active
+    - (data_iface_network_file_networkctl.stdout | default('') | trim) == ''
   become: true
 
 - name: set {{ core.data_iface }}'s systemd-networkd filename
   set_fact:
     data_iface_network_filename: >-
       {{
-        (data_iface_network_file_cmd.stdout | trim)
-        if (data_iface_network_file_cmd.stdout | trim) != ''
-        else (data_iface_network_file_networkctl.stdout | default('') | trim)
+        (data_iface_network_file_networkctl.stdout | default('') | trim)
+        if (data_iface_network_file_networkctl.stdout | default('') | trim) != ''
+        else (data_iface_network_file_cmd.stdout | default('') | trim)
       }}
   when: inventory_hostname in groups['master_nodes']
 
 - name: set whether {{ core.data_iface }} is managed by systemd-networkd
   set_fact:
-    data_iface_networkd_managed: "{{ (data_iface_network_filename | default('') | trim) is match('.*\\.network$') }}"
+    data_iface_networkd_managed: >-
+      {{
+        systemd_networkd_active
+        and (data_iface_network_filename | default('') | trim) is match('.*\\.network$')
+      }}
   when: inventory_hostname in groups['master_nodes']
 
 - name: note direct macvlan fallback for {{ core.data_iface }}
@@ -175,7 +214,7 @@
   systemd:
     name: aether-5gc-macvlan.service
     enabled: true
-    state: started
+    state: restarted
   when:
     - inventory_hostname in groups['master_nodes']
     - not data_iface_networkd_managed
@@ -248,12 +287,33 @@
   when: inventory_hostname in groups['master_nodes']
   become: true
 
+- name: wait for core interface to be ready
+  command: ip link show core
+  register: core_interface_check
+  changed_when: false
+  failed_when: false
+  retries: 15
+  delay: 1
+  until: core_interface_check.rc == 0
+  when: inventory_hostname in groups['master_nodes']
+  become: true
+
+- name: wait for access interface to be ready
+  command: ip link show access
+  register: access_interface_check
+  changed_when: false
+  failed_when: false
+  retries: 15
+  delay: 1
+  until: access_interface_check.rc == 0
+  when:
+    - inventory_hostname in groups['master_nodes']
+    - not core.upf.multihop_gnb
+  become: true
+
 - name: start 5gc-iptables.service
   systemd:
     name: 5gc-iptables.service
     state: started
   when: inventory_hostname in groups['master_nodes']
   become: true
-
-- pause:
-    seconds: 15
