@@ -5,6 +5,7 @@
 - set_fact:
     systemd_network_dir: /etc/systemd/network
     systemd_system_dir: /etc/systemd/system
+    router_sysctl_backup_file: /var/lib/aether-5gc-router-sysctl-backup.conf
 
 - name: stop 5gc-iptables.service
   systemd:
@@ -155,7 +156,6 @@
   failed_when: false
   when:
     - inventory_hostname in groups['master_nodes']
-    - systemd_networkd_active
   become: true
   ignore_errors: yes
 
@@ -171,7 +171,6 @@
   failed_when: false
   when:
     - inventory_hostname in groups['master_nodes']
-    - systemd_networkd_active
     - (data_iface_network_file_networkctl.stdout | default('') | trim) == ''
   become: true
   ignore_errors: yes
@@ -184,7 +183,17 @@
         if (data_iface_network_file_networkctl.stdout | default('') | trim) != ''
         else (data_iface_network_file_cmd.stdout | default('') | trim)
       }}
-  when: inventory_hostname in groups['master_nodes']
+  when:
+    - inventory_hostname in groups['master_nodes']
+    - systemd_networkd_active
+  ignore_errors: yes
+
+- name: set empty systemd-networkd filename when systemd-networkd is inactive
+  set_fact:
+    data_iface_network_filename: ''
+  when:
+    - inventory_hostname in groups['master_nodes']
+    - not (systemd_networkd_active | default(false))
   ignore_errors: yes
 
 - name: delete {{ systemd_network_dir }}/{{ data_iface_network_filename }}.d/macvlan.conf
@@ -254,6 +263,41 @@
   become: true
   ignore_errors: yes
 
+- name: check for router sysctl backup file
+  stat:
+    path: "{{ router_sysctl_backup_file }}"
+  register: router_sysctl_backup_stat
+  when: inventory_hostname in groups['master_nodes']
+  become: true
+  ignore_errors: yes
+
+- name: read router sysctl backup file
+  slurp:
+    src: "{{ router_sysctl_backup_file }}"
+  register: router_sysctl_backup_content
+  when:
+    - inventory_hostname in groups['master_nodes']
+    - router_sysctl_backup_stat.stat.exists
+  become: true
+  ignore_errors: yes
+
+- name: extract saved router sysctl values
+  set_fact:
+    saved_net_ipv4_ip_forward: >-
+      {{
+        (router_sysctl_backup_content.content | default('') | b64decode)
+        | regex_search('(?m)^net\\.ipv4\\.ip_forward=(.+)$', '\\1')
+        | default('', true)
+      }}
+    saved_net_ipv4_conf_iface_forwarding: >-
+      {{
+        (router_sysctl_backup_content.content | default('') | b64decode)
+        | regex_search('(?m)^net\\.ipv4\\.conf\\.{{ core.data_iface | regex_escape }}\\.forwarding=(.+)$', '\\1')
+        | default('', true)
+      }}
+  when: inventory_hostname in groups['master_nodes']
+  ignore_errors: yes
+
 - name: set net.ipv4.conf.all.arp_filter to 0
   ansible.posix.sysctl:
     name: net.ipv4.conf.all.arp_filter
@@ -294,22 +338,60 @@
   become: true
   ignore_errors: yes
 
-- name: set net.ipv4.conf.{{ core.data_iface }}.forwarding to 0
+- name: restore net.ipv4.conf.{{ core.data_iface }}.forwarding
   ansible.posix.sysctl:
     name: net.ipv4.conf.{{ core.data_iface }}.forwarding
-    value: '0'
+    value: '{{ saved_net_ipv4_conf_iface_forwarding }}'
     sysctl_set: true
     reload: true
-  when: inventory_hostname in groups['master_nodes']
+  when:
+    - inventory_hostname in groups['master_nodes']
+    - (saved_net_ipv4_conf_iface_forwarding | default('')) != ''
   become: true
   ignore_errors: yes
 
-- name: set net.ipv4.ip_forward to 0
+- name: remove net.ipv4.conf.{{ core.data_iface }}.forwarding sysctl configuration
+  ansible.posix.sysctl:
+    name: net.ipv4.conf.{{ core.data_iface }}.forwarding
+    state: absent
+    sysctl_set: false
+    reload: true
+  when:
+    - inventory_hostname in groups['master_nodes']
+    - (saved_net_ipv4_conf_iface_forwarding | default('')) == ''
+  become: true
+  ignore_errors: yes
+
+- name: restore net.ipv4.ip_forward
   ansible.posix.sysctl:
     name: net.ipv4.ip_forward
-    value: '0'
+    value: '{{ saved_net_ipv4_ip_forward }}'
     sysctl_set: true
     reload: true
-  when: inventory_hostname in groups['master_nodes']
+  when:
+    - inventory_hostname in groups['master_nodes']
+    - (saved_net_ipv4_ip_forward | default('')) != ''
+  become: true
+  ignore_errors: yes
+
+- name: remove net.ipv4.ip_forward sysctl configuration
+  ansible.posix.sysctl:
+    name: net.ipv4.ip_forward
+    state: absent
+    sysctl_set: false
+    reload: true
+  when:
+    - inventory_hostname in groups['master_nodes']
+    - (saved_net_ipv4_ip_forward | default('')) == ''
+  become: true
+  ignore_errors: yes
+
+- name: delete router sysctl backup file
+  file:
+    path: "{{ router_sysctl_backup_file }}"
+    state: absent
+  when:
+    - inventory_hostname in groups['master_nodes']
+    - router_sysctl_backup_stat.stat.exists
   become: true
   ignore_errors: yes
