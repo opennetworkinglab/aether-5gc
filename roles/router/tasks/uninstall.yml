@@ -286,13 +286,15 @@
     saved_net_ipv4_ip_forward: >-
       {{
         (router_sysctl_backup_content.content | default('') | b64decode)
-        | regex_search('(?m)^net\\.ipv4\\.ip_forward=(.+)$', '\\1')
+        | regex_findall('(?m)^net\\.ipv4\\.ip_forward=(.+)$')
+        | first
         | default('', true)
       }}
     saved_net_ipv4_conf_iface_forwarding: >-
       {{
         (router_sysctl_backup_content.content | default('') | b64decode)
-        | regex_search('(?m)^net\\.ipv4\\.conf\\.{{ core.data_iface | regex_escape }}\\.forwarding=(.+)$', '\\1')
+        | regex_findall('(?m)^net\\.ipv4\\.conf\\.{{ core.data_iface | regex_escape }}\\.forwarding=(.+)$')
+        | first
         | default('', true)
       }}
   when: inventory_hostname in groups['master_nodes']
