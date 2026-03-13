@@ -1,10 +1,10 @@
-# SPDX-FileCopyrightText: 2026 Intel Corporation
+# Copyright (C) 2026 Intel Corporation
 # SPDX-License-Identifier: Apache-2.0
 
 [Unit]
 Description=5GC iptables rules
-After=systemd-networkd.service
-Wants=sys-subsystem-net-devices-core.device
+After=network-online.target aether-5gc-macvlan.service sys-subsystem-net-devices-core.device{% if not core.upf.multihop_gnb %} sys-subsystem-net-devices-access.device{% endif %}
+Wants=network-online.target sys-subsystem-net-devices-core.device{% if not core.upf.multihop_gnb %} sys-subsystem-net-devices-access.device{% endif %}
 
 [Service]
 Type=oneshot
