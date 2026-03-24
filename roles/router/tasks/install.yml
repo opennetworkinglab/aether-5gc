@@ -6,6 +6,9 @@
     systemd_network_dir: /etc/systemd/network
     systemd_system_dir: /etc/systemd/system
     router_sysctl_backup_file: /var/lib/aether-5gc-router-sysctl-backup.conf
+    router_data_iface_forwarding_sysctl: net/ipv4/conf/{{ core.data_iface }}/forwarding
+    router_data_iface_forwarding_backup_regexp: >-
+      ^(net\.ipv4\.conf\.{{ core.data_iface | regex_escape }}\.forwarding|net/ipv4/conf/{{ core.data_iface | regex_escape }}/forwarding)=
 
 - name: set net.ipv4.conf.all.arp_filter to 1
   ansible.posix.sysctl:
@@ -88,29 +91,33 @@
   when: inventory_hostname in groups['master_nodes']
   become: true
 
-- name: read current net.ipv4.conf.{{ core.data_iface }}.forwarding value
-  command: sysctl -n net.ipv4.conf.{{ core.data_iface }}.forwarding
+- name: read current {{ router_data_iface_forwarding_sysctl }} value
+  command:
+    argv:
+      - sysctl
+      - -n
+      - "{{ router_data_iface_forwarding_sysctl }}"
   register: original_net_ipv4_conf_iface_forwarding
   changed_when: false
   when: inventory_hostname in groups['master_nodes']
   become: true
 
-- name: persist original net.ipv4.conf.{{ core.data_iface }}.forwarding value for uninstall
+- name: persist original {{ router_data_iface_forwarding_sysctl }} value for uninstall
   lineinfile:
     path: "{{ router_sysctl_backup_file }}"
     create: true
     mode: '0600'
-    line: "net.ipv4.conf.{{ core.data_iface }}.forwarding={{ original_net_ipv4_conf_iface_forwarding.stdout | trim }}"
-    regexp: '^net\.ipv4\.conf\.{{ core.data_iface | regex_escape }}\.forwarding='
+    line: "{{ router_data_iface_forwarding_sysctl }}={{ original_net_ipv4_conf_iface_forwarding.stdout | trim }}"
+    regexp: "{{ router_data_iface_forwarding_backup_regexp }}"
   when:
     - inventory_hostname in groups['master_nodes']
     - original_net_ipv4_conf_iface_forwarding is defined
-    - not ((router_sysctl_backup_content.content | default('') | b64decode) is regex('(?m)^net\\.ipv4\\.conf\\.{{ core.data_iface | regex_escape }}\\.forwarding='))
+    - not ((router_sysctl_backup_content.content | default('') | b64decode) is regex('(?m){{ router_data_iface_forwarding_backup_regexp }}'))
   become: true
 
-- name: set net.ipv4.conf.{{ core.data_iface }}.forwarding to 1
+- name: set {{ router_data_iface_forwarding_sysctl }} to 1
   ansible.posix.sysctl:
-    name: net.ipv4.conf.{{ core.data_iface }}.forwarding
+    name: "{{ router_data_iface_forwarding_sysctl }}"
     value: '1'
     sysctl_set: true
     reload: true

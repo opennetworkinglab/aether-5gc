@@ -6,6 +6,9 @@
     systemd_network_dir: /etc/systemd/network
     systemd_system_dir: /etc/systemd/system
     router_sysctl_backup_file: /var/lib/aether-5gc-router-sysctl-backup.conf
+    router_data_iface_forwarding_sysctl: net/ipv4/conf/{{ core.data_iface }}/forwarding
+    router_data_iface_forwarding_backup_regexp: >-
+      ^(net\.ipv4\.conf\.{{ core.data_iface | regex_escape }}\.forwarding|net/ipv4/conf/{{ core.data_iface | regex_escape }}/forwarding)=(.+)$
 
 - name: stop 5gc-iptables.service
   systemd:
@@ -293,8 +296,9 @@
     saved_net_ipv4_conf_iface_forwarding: >-
       {{
         (router_sysctl_backup_content.content | default('') | b64decode)
-        | regex_findall('(?m)^net\\.ipv4\\.conf\\.{{ core.data_iface | regex_escape }}\\.forwarding=(.+)$')
+        | regex_findall('(?m){{ router_data_iface_forwarding_backup_regexp }}')
         | first
+        | last
         | default('', true)
       }}
   when: inventory_hostname in groups['master_nodes']
@@ -340,9 +344,9 @@
   become: true
   ignore_errors: yes
 
-- name: restore net.ipv4.conf.{{ core.data_iface }}.forwarding
+- name: restore {{ router_data_iface_forwarding_sysctl }}
   ansible.posix.sysctl:
-    name: net.ipv4.conf.{{ core.data_iface }}.forwarding
+    name: "{{ router_data_iface_forwarding_sysctl }}"
     value: '{{ saved_net_ipv4_conf_iface_forwarding }}'
     sysctl_set: true
     reload: true
@@ -352,9 +356,9 @@
   become: true
   ignore_errors: yes
 
-- name: remove net.ipv4.conf.{{ core.data_iface }}.forwarding sysctl configuration
+- name: remove {{ router_data_iface_forwarding_sysctl }} sysctl configuration
   ansible.posix.sysctl:
-    name: net.ipv4.conf.{{ core.data_iface }}.forwarding
+    name: "{{ router_data_iface_forwarding_sysctl }}"
     state: absent
     sysctl_set: false
     reload: true
