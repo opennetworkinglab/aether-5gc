@@ -4,7 +4,7 @@
 
 - name: check VF resources
   block:
-    - name: Get number of VF's available for the "{{ core.data_iface }}"
+    - name: Get number of VFs available for interface {{ core.data_iface }}
       shell: ip link show "{{ core.data_iface }}" | grep -c vf
       register: vf_status
       changed_when: false
@@ -12,7 +12,7 @@
     - debug:
          var=vf_status.stdout
 
-    - name: verify the required VF resourses available in "{{ core.data_iface }}"
+    - name: verify the required VF resourses available in {{ core.data_iface }}
       ansible.builtin.assert:
         that:
           - vf_status.stdout | int >= 2
