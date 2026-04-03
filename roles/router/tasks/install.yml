@@ -112,7 +112,7 @@
   when:
     - inventory_hostname in groups['master_nodes']
     - original_net_ipv4_conf_iface_forwarding is defined
-    - not ((router_sysctl_backup_content.content | default('') | b64decode) is regex('(?m){{ router_data_iface_forwarding_backup_regexp }}'))
+    - not ((router_sysctl_backup_content.content | default('') | b64decode) is regex(router_data_iface_forwarding_backup_regexp, multiline=true))
   become: true
 
 - name: set {{ router_data_iface_forwarding_sysctl }} to 1
