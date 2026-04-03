@@ -33,7 +33,7 @@
 
 - name: update helm dependencies
   shell: |
-    helm dep up "{{ core.helm.chart_ref }}"
+    helm dep up "{{ core.upf.helm.chart_ref }}"
   when: inventory_hostname in groups['master_nodes'] and core.upf.helm.local_charts
 
 - name: deploy upf
