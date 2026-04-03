@@ -36,14 +36,18 @@
     helm dep up "{{ core.upf.helm.chart_ref }}"
   when: inventory_hostname in groups['master_nodes'] and core.upf.helm.local_charts
 
+- set_fact:
+    upf_helm_requires_repo_update: "{{ (not core.upf.helm.local_charts) and not (core.upf.helm.chart_ref is match('^oci://')) }}"
+  when: inventory_hostname in groups['master_nodes']
+
 - name: deploy upf
   kubernetes.core.helm:
-    update_repo_cache: true
+    update_repo_cache: "{{ upf_helm_requires_repo_update }}"
     name: bess-upf
     release_namespace: aether-upf-{{ item.key }}
     create_namespace: true
     chart_ref: "{{ core.upf.helm.chart_ref }}"
-    chart_version: "{{ core.upf.helm.chart_version }}"
+    chart_version: "{{ core.upf.helm.chart_version if core.upf.helm.local_charts == false else omit }}"
     values_files:
       - /tmp/upf-{{item.key}}.yaml
     wait: true
