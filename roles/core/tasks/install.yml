@@ -108,8 +108,8 @@
         done <<< "{{ pod_status.stdout }}"
       args:
         executable: /bin/bash
-      changed_when: "'deleted' in stdout"
       register: pod_restart
+      changed_when: "'deleted' in pod_restart.stdout"
       when: inventory_hostname in groups['master_nodes']
   always:
     - pause:
