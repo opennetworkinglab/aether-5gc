@@ -13,15 +13,19 @@ To download the 5gc repository, use the following command:
 ```
 git clone https://github.com/omec-project/aether-5gc.git
 ```
+To download the k8s repository used to provision the cluster, use:
+```
+git clone https://github.com/omec-project/aether-k8s.git
+```
 ### Step-by-Step Installation
 To install the 5g-core, follow these steps:
 1. Set the configuration variables in the `vars/main.yml` file.
    - Set the "standalone" parameter to deploy the core independently from roc.
    - Specify the "data_iface" parameter as the network interface name of the machine.
    - Set the "values_file" parameter:
-      - Use "sdcore-5g-values.yaml" for a stateful 5g core.
-      - Use "radio-5g-values.yaml" or "sdcore-5g-sriov-values.yaml" for alternative deployment profiles.
-   - The "custom_ran_subnet" parameter if left empty, core will use the subnet of "data_iface" for UPF.
+      - Use "roles/core/templates/sdcore-5g-values.yaml" for a stateful 5g core.
+      - Use "roles/core/templates/radio-5g-values.yaml" or "roles/core/templates/sdcore-5g-sriov-values.yaml" for alternative deployment profiles.
+   - If the `core.ran_subnet` parameter is left empty, the core will use the subnet of "data_iface" for UPF.
 2. Add the hosts to `hosts.ini`.
 3. Run `make ansible`.
 4. In the running Ansible docker terminal:

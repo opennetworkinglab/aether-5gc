@@ -12,7 +12,7 @@
     - debug:
          var=vf_status.stdout
 
-    - name: verify the required VF resourses available in {{ core.data_iface }}
+    - name: verify the required VF resources available in {{ core.data_iface }}
       ansible.builtin.assert:
         that:
           - vf_status.stdout | int >= 2
