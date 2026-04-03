@@ -298,8 +298,8 @@
         (router_sysctl_backup_content.content | default('') | b64decode)
         | regex_findall(router_data_iface_forwarding_backup_regexp, multiline=true)
         | first
+        | default(['', ''], true)
         | last
-        | default('', true)
       }}
   when: inventory_hostname in groups['master_nodes']
   ignore_errors: yes
