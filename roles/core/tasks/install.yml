@@ -73,6 +73,12 @@
       }}
   when: inventory_hostname in groups['master_nodes'] and core.helm.local_charts
 
+- name: check local 5gc-cp charts directory
+  stat:
+    path: /tmp/sdcore-helm-charts/5g-control-plane/charts
+  register: core_cp_charts_dir
+  when: inventory_hostname in groups['master_nodes'] and core.helm.local_charts
+
 - name: check local 5gc-cp chart dependencies
   find:
     paths: /tmp/sdcore-helm-charts/5g-control-plane/charts
@@ -83,6 +89,7 @@
   when:
     - inventory_hostname in groups['master_nodes']
     - core.helm.local_charts
+    - core_cp_charts_dir.stat.exists
     - core_cp_dependency_names | length > 0
 
 - name: require manual 5gc-cp helm dependency update when charts are missing
@@ -96,7 +103,7 @@
   when:
     - inventory_hostname in groups['master_nodes']
     - core.helm.local_charts
-    - (core_cp_chart_dependencies.results | default([]) | selectattr('matched', 'equalto', 0) | list | length) > 0
+    - not core_cp_charts_dir.stat.exists or (core_cp_chart_dependencies.results | default([]) | selectattr('matched', 'equalto', 0) | list | length) > 0
 
 - name: update aether 5gc helm dependencies
   shell: |
