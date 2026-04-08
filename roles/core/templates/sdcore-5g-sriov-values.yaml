@@ -448,7 +448,7 @@ omec-user-plane:
   nodeSelectors:
     enabled: true
   resources:
-    enabled: false
+    enabled: true
   # images:
   #   repository: ""
   #   tags:
